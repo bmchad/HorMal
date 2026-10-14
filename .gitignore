@@ -9,6 +9,7 @@ package-lock.json
 .env.development
 .env.production
 !.env.example
+samconfig.toml
 
 # Build artifacts & caches
 dist/
