@@ -51,7 +51,7 @@ export function defaultVoiceId(engine: VoiceEngine, language: string): string {
 
 let polly: PollyClient | undefined;
 let s3: S3Client | undefined;
-const getPolly = () => (polly ??= new PollyClient({}));
+const getPolly = () => (polly ??= new PollyClient({ region: process.env.POLLY_REGION || 'us-east-1' }));
 const getS3 = () => (s3 ??= new S3Client({}));
 
 function resolveGoogleVoice(voiceId: string, language: string): string {
@@ -108,7 +108,7 @@ async function synthesizePolly(text: string, language: string, voiceId: string):
   const unique = [...new Set(candidates)];
   let lastErr: unknown;
   for (const voice of unique) {
-    for (const engine of ['generative', 'neural'] as Engine[]) {
+    for (const engine of ['generative', 'neural', 'standard'] as Engine[]) {
       try {
         const res = await getPolly().send(
           new SynthesizeSpeechCommand({

@@ -153,6 +153,7 @@ Resources:
           GOOGLE_TTS_API_KEY: !Ref GoogleTtsApiKey
           AUDIO_BUCKET: !Ref AudioBucket
           AUDIO_CDN_DOMAIN: !Ref AudioCdnDomain
+          POLLY_REGION: us-east-1
           NODE_OPTIONS: --enable-source-maps
       Policies:
         - Statement:
