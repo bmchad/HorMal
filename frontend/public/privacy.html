@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Política de Privacidade — HörMal</title>
+    <meta
+      name="description"
+      content="Política de Privacidade e Termos de Uso de Dados do aplicativo HörMal — Pure-Listening Tutor. Conformidade com Google OAuth 2.0, LGPD e GDPR."
+    />
+    <meta name="theme-color" content="#090714" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-start: #090714;
+        --bg-mid: #0f0a24;
+        --bg-end: #160d38;
+        --card-bg: rgba(22, 16, 48, 0.72);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --card-border-hover: rgba(168, 85, 247, 0.35);
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --text-subtle: #64748b;
+        --brand-accent: #a855f7;
+        --brand-glow: rgba(168, 85, 247, 0.25);
+        --cyan-accent: #38bdf8;
+        --emerald-accent: #34d399;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: radial-gradient(circle at 50% 0%, #1e1147 0%, var(--bg-start) 65%);
+        background-color: var(--bg-start);
+        color: var(--text-main);
+        min-height: 100vh;
+        line-height: 1.65;
+        font-size: 15px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 40px 20px 80px;
+      }
+
+      header {
+        position: relative;
+        padding: 32px 0 24px;
+        border-bottom: 1px solid var(--card-border);
+        margin-bottom: 32px;
+      }
+
+      .nav-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.06);
+        color: #e2e8f0;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 9999px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.2s ease;
+      }
+
+      .back-btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .lang-switcher {
+        display: flex;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 9999px;
+        padding: 3px;
+        gap: 4px;
+      }
+
+      .lang-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .lang-btn.active {
+        background: linear-gradient(135deg, #7c3aed, #a855f7);
+        color: #ffffff;
+        box-shadow: 0 2px 8px rgba(168, 85, 247, 0.35);
+      }
+
+      .app-branding {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+
+      .app-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35);
+      }
+
+      .app-name-wrap h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+
+      .app-tagline {
+        font-size: 13px;
+        color: var(--brand-accent);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .meta-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 10px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 10px;
+        border-radius: 9999px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .badge-google {
+        background: rgba(66, 133, 244, 0.15);
+        border: 1px solid rgba(66, 133, 244, 0.35);
+        color: #93c5fd;
+      }
+
+      .badge-verified {
+        background: rgba(52, 211, 153, 0.15);
+        border: 1px solid rgba(52, 211, 153, 0.35);
+        color: #6ee7b7;
+      }
+
+      .section {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 28px;
+        margin-bottom: 24px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        transition: border-color 0.25s ease;
+      }
+
+      .section:hover {
+        border-color: var(--card-border-hover);
+      }
+
+      .section h2 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 14px;
+        color: #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .section h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 18px 0 8px;
+        color: #e2e8f0;
+      }
+
+      p {
+        margin-bottom: 14px;
+        color: #cbd5e1;
+      }
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+
+      ul {
+        margin: 10px 0 16px 22px;
+        color: #cbd5e1;
+      }
+
+      li {
+        margin-bottom: 8px;
+      }
+
+      li strong {
+        color: #f8fafc;
+      }
+
+      .highlight-box {
+        background: rgba(168, 85, 247, 0.08);
+        border-left: 3px solid var(--brand-accent);
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 14px;
+      }
+
+      .google-box {
+        background: rgba(66, 133, 244, 0.08);
+        border-left: 3px solid #4285f4;
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 14px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        font-size: 13.5px;
+      }
+
+      th, td {
+        padding: 10px 14px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      }
+
+      th {
+        font-weight: 600;
+        color: #e2e8f0;
+        background: rgba(255, 255, 255, 0.04);
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+      }
+
+      td {
+        color: #cbd5e1;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      footer {
+        text-align: center;
+        padding: 40px 0 20px;
+        border-top: 1px solid var(--card-border);
+        color: var(--text-subtle);
+        font-size: 13px;
+      }
+
+      a.inline-link {
+        color: var(--cyan-accent);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      a.inline-link:hover {
+        color: #7dd3fc;
+      }
+
+      .lang-content {
+        display: block;
+      }
+
+      .lang-content.hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="nav-bar">
+          <a href="/" class="back-btn" id="btn-back-app">
+            <span>←</span> <span data-pt="Voltar ao HörMal" data-en="Back to HörMal">Voltar ao HörMal</span>
+          </a>
+          <div class="lang-switcher">
+            <button class="lang-btn active" id="btn-lang-pt" onclick="switchLanguage('pt')">Português</button>
+            <button class="lang-btn" id="btn-lang-en" onclick="switchLanguage('en')">English</button>
+          </div>
+        </div>
+
+        <div class="app-branding">
+          <div class="app-logo">🎧</div>
+          <div class="app-name-wrap">
+            <div class="app-tagline">Pure-Listening Language Tutor</div>
+            <h1 id="page-title">Política de Privacidade</h1>
+          </div>
+        </div>
+
+        <div class="meta-info">
+          <span class="badge badge-verified">✓ Atualizada em: 13 de Outubro de 2026</span>
+          <span class="badge badge-google">Google OAuth 2.0 Limited Use</span>
+          <span>Aplicativo: <strong>HörMal</strong></span>
+        </div>
+      </header>
+
+      <!-- CONTEÚDO EM PORTUGUÊS -->
+      <main id="content-pt" class="lang-content">
+        <section class="section">
+          <h2>1. Identificação do Aplicativo e Compromisso</h2>
+          <p>
+            O <strong>HörMal</strong> ("nós", "nosso", ou "aplicativo") é uma plataforma de aprendizado de idiomas voltada à prática de compreensão auditiva (<em>pure-listening</em>), combinando histórias narradas por inteligência artificial, questões de interpretação e feedback gramatical instantâneo.
+          </p>
+          <p>
+            Esta Política de Privacidade esclarece como tratamos suas informações pessoais ao utilizar nossa aplicação e acessar serviços por meio do login com a Conta Google (Single Sign-On / SSO). Temos como princípio fundamental a minimização de dados: coletamos exclusivamente o estritamente necessário para personalizar sua experiência didática e manter suas preferências de aprendizagem.
+          </p>
+        </section>
+
+        <section class="section">
+          <h2>2. Dados Coletados via Google OAuth 2.0</h2>
+          <p>
+            Para garantir um acesso rápido, seguro e sem senhas fracas, o HörMal utiliza o <strong>Google OAuth 2.0</strong> (orquestrado pelo Amazon Cognito). Solicitamos apenas os escopos básicos de identidade:
+          </p>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Escopo Solicitado</th>
+                  <th>Dados Obtidos</th>
+                  <th>Finalidade de Uso</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>openid</code></td>
+                  <td>Identificador de usuário único (Google Subject ID / <code>sub</code>)</td>
+                  <td>Identificar sua conta unicamente e vincular seu histórico de histórias e vocabulário.</td>
+                </tr>
+                <tr>
+                  <td><code>email</code></td>
+                  <td>Endereço de e-mail verificado</td>
+                  <td>Associação do perfil de usuário, envio de comunicações essenciais sobre a conta (quando aplicável).</td>
+                </tr>
+                <tr>
+                  <td><code>profile</code></td>
+                  <td>Nome de exibição e URL do avatar público</td>
+                  <td>Exibição amigável do seu nome e foto no cabeçalho e na aba de Perfil do aplicativo.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            <strong>Não solicitamos</strong> e <strong>não temos acesso</strong> a: seus contatos, mensagens do Gmail, arquivos do Google Drive, calendário ou senhas da sua Conta Google.
+          </p>
+        </section>
+
+        <section class="section">
+          <h2>3. Conformidade com a Política de Dados do Google (Limited Use)</h2>
+          <div class="google-box">
+            <strong>Declaração de Uso Limitado da API do Google:</strong><br />
+            O uso e a transferência de informações recebidas das APIs do Google para qualquer outro aplicativo pelo <em>HörMal</em> aderem rigorosamente à
+            <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer" class="inline-link">
+              Política de Dados do Usuário dos Serviços de API do Google
+            </a>, incluindo os requisitos de Uso Limitado (<em>Limited Use Requirements</em>).
+          </div>
+          <p>Em conformidade com essas diretrizes:</p>
+          <ul>
+            <li><strong>Nunca vendemos seus dados:</strong> Seus dados pessoais ou do perfil Google nunca serão vendidos, licenciados ou transferidos a terceiros, corretores de dados ou redes de publicidade.</li>
+            <li><strong>Sem anúncios direcionados:</strong> Não utilizamos seus dados para veicular propagandas personalizadas nem criar perfis de comportamento publicitário.</li>
+            <li><strong>Sem treinamento de modelos fundacionais com dados privados:</strong> Não utilizamos os dados recebidos do Google nem as respostas individuais dos usuários para treinar modelos fundacionais de inteligência artificial de uso geral ou comercial.</li>
+            <li><strong>Acesso humano restrito:</strong> Nenhum ser humano tem permissão para ler seus dados privados, exceto com seu consentimento explícito para fins de suporte técnico, para cumprimento de obrigação legal ou quando anonimizados para estatísticas agregadas.</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>4. Dados Gerados no Uso do HörMal</h2>
+          <p>Conforme você estuda e pratica idiomas no aplicativo, armazenamos:</p>
+          <ul>
+            <li><strong>Preferências de Estudo:</strong> Idioma da interface (ex: Português, Inglês, Alemão), idioma de estudo (ex: Alemão, Francês, Espanhol, Italiano), nível CEFR (A1, A2, B1, B2) e motor de síntese de voz preferido.</li>
+            <li><strong>Histórico de Prática:</strong> Histórias geradas, respostas inseridas nas perguntas de compreensão e feedbacks gramaticais fornecidos pela tutora IA.</li>
+            <li><strong>Caderno de Vocabulário:</strong> Termos e vocábulos que você clica para salvar em sua lista pessoal de estudo.</li>
+            <li><strong>Cache de Áudio TTS:</strong> As sínteses de voz de frases curtas são indexadas por hashes criptográficos (SHA-256) em armazenamento CDN (Amazon S3 / CloudFront) para otimizar velocidade de reprodução e economia de banda.</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>5. Segurança e Armazenamento</h2>
+          <p>
+            Empregamos arquitetura serverless moderna hospedada na <strong>Amazon Web Services (AWS)</strong> com padrões rigorosos de segurança:
+          </p>
+          <ul>
+            <li><strong>Criptografia em Trânsito:</strong> Toda comunicação é protegida por HTTPS com certificados TLS 1.3 de ponta a ponta.</li>
+            <li><strong>Criptografia em Repouso:</strong> Dados armazenados no banco relacional PostgreSQL e nos buckets de armazenamento são criptografados com chaves gerenciadas de alta segurança (AES-256).</li>
+            <li><strong>Tokens Efêmeros e PKCE:</strong> A autenticação utiliza o fluxo Authorization Code com PKCE (Proof Key for Code Exchange) sem armazenamento de senhas ou dados vulneráveis em cookies desprotegidos.</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>6. Compartilhamento Estritamente Necessário com Subprocessadores</h2>
+          <p>
+            Compartilhamos dados exclusivamente com prestadores de serviços de infraestrutura que viabilizam o funcionamento da aplicação, sob acordos estritos de confidencialidade:
+          </p>
+          <ul>
+            <li><strong>Google Cloud (Gemini API & Google TTS):</strong> Para geração dos textos didáticos e síntese de voz das histórias.</li>
+            <li><strong>Amazon Web Services (AWS):</strong> Autenticação (Amazon Cognito), execução do backend (AWS Lambda) e distribuição de conteúdo (CloudFront/S3).</li>
+            <li><strong>Neon / PostgreSQL Provider:</strong> Armazenamento seguro e isolado do banco de dados relacional.</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>7. Seus Direitos (LGPD, GDPR e Revogação Google)</h2>
+          <p>Você possui total controle sobre seus dados pessoais:</p>
+          <ul>
+            <li><strong>Acesso e Correção:</strong> Você pode consultar e editar suas preferências e vocabulários diretamente na aba de Perfil do app.</li>
+            <li><strong>Exclusão de Conta:</strong> A qualquer momento, você pode solicitar a remoção permanente de todos os seus dados e histórico vinculados ao seu e-mail.</li>
+            <li><strong>Revogação de Acesso no Google:</strong> Você pode revogar as permissões concedidas ao HörMal a qualquer instante através da página oficial de segurança do Google em:
+              <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer" class="inline-link">
+                myaccount.google.com/permissions
+              </a>.
+            </li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>8. Contato e Encarregado de Privacidade</h2>
+          <p>
+            Caso você tenha qualquer dúvida sobre esta Política de Privacidade ou deseje exercer seus direitos de privacidade e exclusão de dados, entre em contato através de:
+          </p>
+          <div class="highlight-box">
+            📧 <strong>Canal de Suporte e Privacidade:</strong> <a href="mailto:privacy@hormal.app" class="inline-link">privacy@hormal.app</a><br />
+            🌐 <strong>Página Inicial do Aplicativo:</strong> <a href="/" class="inline-link">HörMal Home</a>
+          </div>
+        </section>
+      </main>
+
+      <!-- CONTEÚDO EM INGLÊS (ENGLISH) -->
+      <main id="content-en" class="lang-content hidden">
+        <section class="section">
+          <h2>1. Application Overview & Commitment</h2>
+          <p>
+            <strong>HörMal</strong> ("we", "our", or "app") is a pure-listening language practice application combining AI-generated stories, natural feminine text-to-speech voices, comprehension questions, and instant tutor feedback.
+          </p>
+          <p>
+            This Privacy Policy explains how your information is handled when you use our service and sign in with your Google Account (Single Sign-On / SSO). We strictly uphold data minimization principles: we only collect the bare minimum required to deliver and personalize your learning journey.
+          </p>
+        </section>
+
+        <section class="section">
+          <h2>2. Data Collected via Google OAuth 2.0</h2>
+          <p>
+            To provide a seamless, passwordless sign-in experience, HörMal uses <strong>Google OAuth 2.0</strong> (federated via Amazon Cognito). We request only basic identity scopes:
+          </p>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Requested Scope</th>
+                  <th>Data Received</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>openid</code></td>
+                  <td>Unique User ID (Google Subject ID / <code>sub</code>)</td>
+                  <td>Uniquely identify your account to link your learning history and vocabulary flashcards.</td>
+                </tr>
+                <tr>
+                  <td><code>email</code></td>
+                  <td>Verified Email Address</td>
+                  <td>Account identification, essential service notices, and profile matching.</td>
+                </tr>
+                <tr>
+                  <td><code>profile</code></td>
+                  <td>Display Name & Public Profile Photo URL</td>
+                  <td>Personalize your app experience (displaying your avatar and name in the UI).</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            <strong>We do not request and do not have access to:</strong> your Google contacts, Gmail messages, Google Drive files, calendar events, or Google passwords.
+          </p>
+        </section>
+
+        <section class="section">
+          <h2>3. Google API Services User Data Policy Compliance (Limited Use)</h2>
+          <div class="google-box">
+            <strong>Google API Limited Use Disclosure:</strong><br />
+            HörMal's use and transfer of information received from Google APIs to any other app will adhere to the
+            <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer" class="inline-link">
+              Google API Services User Data Policy
+            </a>, including the Limited Use requirements.
+          </div>
+          <p>Specifically:</p>
+          <ul>
+            <li><strong>No Data Sales:</strong> We never sell, rent, or trade your personal data or Google account information to third parties, data brokers, or advertisers.</li>
+            <li><strong>No Targeted Ads:</strong> We do not use Google user data for advertising purposes.</li>
+            <li><strong>No AI Model Training on Private Data:</strong> We do not use private data obtained via Google to train foundation or general AI models.</li>
+            <li><strong>Restricted Human Access:</strong> No humans read your private data unless you give explicit consent for troubleshooting, to comply with applicable law, or when aggregated and de-identified.</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>4. Data Generated During Use</h2>
+          <p>As you study on HörMal, we store:</p>
+          <ul>
+            <li><strong>Learning Preferences:</strong> UI language, target study language (e.g. German, French, Spanish, Italian), CEFR level (A1-B2), and chosen voice engine.</li>
+            <li><strong>Practice Progress:</strong> Stories generated, your comprehension question responses, and AI tutor grammar corrections.</li>
+            <li><strong>Vocabulary Flashcards:</strong> Words you choose to save into your personal study list.</li>
+            <li><strong>Audio Cache:</strong> Text-to-speech audio files are indexed by SHA-256 hashes on secure cloud storage (AWS S3/CloudFront) to ensure fast playback.</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>5. Security & Infrastructure</h2>
+          <p>
+            HörMal is powered by modern serverless cloud infrastructure on <strong>Amazon Web Services (AWS)</strong> with industry-standard security:
+          </p>
+          <ul>
+            <li><strong>Encryption in Transit:</strong> End-to-end TLS 1.3 / HTTPS encryption for all network traffic.</li>
+            <li><strong>Encryption at Rest:</strong> PostgreSQL database and storage buckets encrypted with AES-256.</li>
+            <li><strong>Ephemeral Tokens:</strong> Auth tokens handled via PKCE flow without exposing credentials.</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>6. Your Rights & Google Access Revocation</h2>
+          <p>You retain full authority over your personal data:</p>
+          <ul>
+            <li><strong>Access and Updates:</strong> Modify your preferences anytime in the Profile tab.</li>
+            <li><strong>Account & Data Deletion:</strong> Request full erasure of your account and learning records by emailing our privacy team.</li>
+            <li><strong>Revoke Google Access:</strong> You can disconnect HörMal from your Google account anytime at:
+              <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer" class="inline-link">
+                myaccount.google.com/permissions
+              </a>.
+            </li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>7. Contact & Privacy Officer</h2>
+          <p>For any privacy requests or inquiries, reach out to us at:</p>
+          <div class="highlight-box">
+            📧 <strong>Privacy & Support Email:</strong> <a href="mailto:privacy@hormal.app" class="inline-link">privacy@hormal.app</a><br />
+            🌐 <strong>App Home Page:</strong> <a href="/" class="inline-link">HörMal Home</a>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>© 2026 HörMal. Pure-Listening Multi-Language Tutor. All rights reserved.</p>
+      </footer>
+    </div>
+
+    <script>
+      function switchLanguage(lang) {
+        var ptContent = document.getElementById('content-pt');
+        var enContent = document.getElementById('content-en');
+        var btnPt = document.getElementById('btn-lang-pt');
+        var btnEn = document.getElementById('btn-lang-en');
+        var pageTitle = document.getElementById('page-title');
+
+        if (lang === 'en') {
+          ptContent.classList.add('hidden');
+          enContent.classList.remove('hidden');
+          btnPt.classList.remove('active');
+          btnEn.classList.add('active');
+          pageTitle.textContent = 'Privacy Policy';
+          document.documentElement.lang = 'en';
+          document.querySelectorAll('[data-en]').forEach(function(el) {
+            el.textContent = el.getAttribute('data-en');
+          });
+        } else {
+          enContent.classList.add('hidden');
+          ptContent.classList.remove('hidden');
+          btnEn.classList.remove('active');
+          btnPt.classList.add('active');
+          pageTitle.textContent = 'Política de Privacidade';
+          document.documentElement.lang = 'pt-BR';
+          document.querySelectorAll('[data-pt]').forEach(function(el) {
+            el.textContent = el.getAttribute('data-pt');
+          });
+        }
+      }
+
+      // Auto-detect browser preference if started in English
+      if (navigator.language && !navigator.language.startsWith('pt')) {
+        switchLanguage('en');
+      }
+    </script>
+  </body>
+</html>

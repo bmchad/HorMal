@@ -1,0 +1,306 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  HörMal - ultra-low-cost serverless Multi-Language Pure-Listening Tutor.
+  Cognito (Google SSO only) + HTTP API v2 + Node.js 20 ARM64 Lambda + S3/CloudFront (SPA + audio cache).
+  No VPC / NAT Gateway: Lambda talks over TLS to a serverless Postgres (Neon / Supabase / RDS free tier).
+
+Parameters:
+  GoogleClientId:
+    Type: String
+    Description: OAuth 2.0 Web client ID from Google Cloud Console
+  GoogleClientSecret:
+    Type: String
+    NoEcho: true
+  CognitoDomainPrefix:
+    Type: String
+    Default: hormal
+    Description: Subdomínio / prefixo único para o Cognito Hosted UI (resulta em hormal.auth.<region>.amazoncognito.com)
+  CallbackUrls:
+    Type: CommaDelimitedList
+    Default: 'http://localhost:5173/'
+    Description: >
+      OAuth redirect URLs (must end with /). First deploy with localhost, then redeploy adding
+      the CloudFront URL printed in the stack outputs (or your custom domain).
+  LogoutUrls:
+    Type: CommaDelimitedList
+    Default: 'http://localhost:5173/'
+  DevCorsOrigin:
+    Type: String
+    Default: 'http://localhost:5173'
+    Description: Extra browser origin allowed by API CORS (production traffic is same-origin via CloudFront /api/*)
+  DatabaseUrl:
+    Type: String
+    NoEcho: true
+    Description: postgres://user:pass@host/db?sslmode=require
+  GeminiApiKey:
+    Type: String
+    NoEcho: true
+  GeminiModel:
+    Type: String
+    Default: gemini-3.8-flash
+  OpenAiApiKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+  GoogleTtsApiKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+    Description: Optional dedicated Google Cloud TTS API key (falls back to GeminiApiKey if empty)
+  AudioCdnDomain:
+    Type: String
+    Default: ''
+    Description: Optional custom CDN domain for audio URLs. Empty = same-origin relative URLs (/audio-cache/<hash>.mp3) served by CloudFront.
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Architectures: [arm64]
+    MemorySize: 512
+    Timeout: 29
+
+Resources:
+  # ------------------------------------------------------------------ Cognito (Google SSO ONLY)
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub '${AWS::StackName}-users'
+      UsernameAttributes: [email]
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true # no local sign-up; identities only come from Google
+      Schema:
+        - { Name: email, AttributeDataType: String, Mutable: true, Required: true }
+
+  GoogleIdentityProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId: !Ref UserPool
+      ProviderName: Google
+      ProviderType: Google
+      ProviderDetails:
+        client_id: !Ref GoogleClientId
+        client_secret: !Ref GoogleClientSecret
+        authorize_scopes: 'openid email profile'
+      AttributeMapping:
+        email: email
+        name: name
+        picture: picture
+        username: sub
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn: GoogleIdentityProvider
+    Properties:
+      UserPoolId: !Ref UserPool
+      ClientName: !Sub '${AWS::StackName}-web'
+      GenerateSecret: false
+      SupportedIdentityProviders: [Google]
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows: [code] # OAuth2 authorization-code + PKCE
+      AllowedOAuthScopes: [openid, email, profile]
+      CallbackURLs: !Ref CallbackUrls
+      LogoutURLs: !Ref LogoutUrls
+      ExplicitAuthFlows: [ALLOW_REFRESH_TOKEN_AUTH]
+      PreventUserExistenceErrors: ENABLED
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      RefreshTokenValidity: 30
+      TokenValidityUnits: { AccessToken: hours, IdToken: hours, RefreshToken: days }
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref UserPool
+      Domain: !Ref CognitoDomainPrefix
+
+  # ------------------------------------------------------------------ API (HTTP API v2 + Lambda)
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins: [!Ref DevCorsOrigin]
+        AllowHeaders: [authorization, content-type]
+        AllowMethods: [GET, POST, PATCH, DELETE, OPTIONS]
+      Auth:
+        DefaultAuthorizer: CognitoJwt
+        Authorizers:
+          CognitoJwt:
+            IdentitySource: $request.header.Authorization
+            JwtConfiguration:
+              issuer: !Sub 'https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}'
+              audience: [!Ref UserPoolClient]
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2022
+        Sourcemap: false
+        EntryPoints: [src/handlers/api.ts]
+        External: ['@aws-sdk/*'] # provided by the Node.js 20 Lambda runtime
+    Properties:
+      CodeUri: backend/
+      Handler: api.handler
+      Environment:
+        Variables:
+          DATABASE_URL: !Ref DatabaseUrl
+          GEMINI_API_KEY: !Ref GeminiApiKey
+          GEMINI_MODEL: !Ref GeminiModel
+          OPENAI_API_KEY: !Ref OpenAiApiKey
+          GOOGLE_TTS_API_KEY: !Ref GoogleTtsApiKey
+          AUDIO_BUCKET: !Ref AudioBucket
+          AUDIO_CDN_DOMAIN: !Ref AudioCdnDomain
+          NODE_OPTIONS: --enable-source-maps
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action: polly:SynthesizeSpeech
+              Resource: '*'
+        - S3WritePolicy:
+            BucketName: !Ref AudioBucket
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/{proxy+}
+            Method: ANY
+
+  # ------------------------------------------------------------------ S3 + CloudFront
+  AppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration: { BlockPublicAcls: true, BlockPublicPolicy: true, IgnorePublicAcls: true, RestrictPublicBuckets: true }
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: { SSEAlgorithm: AES256 }
+
+  AudioBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration: { BlockPublicAcls: true, BlockPublicPolicy: true, IgnorePublicAcls: true, RestrictPublicBuckets: true }
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: { SSEAlgorithm: AES256 }
+
+  OriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub '${AWS::StackName}-oac'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  SpaRewriteFunction:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: !Sub '${AWS::StackName}-spa-rewrite'
+      AutoPublish: true
+      FunctionConfig:
+        Comment: Rewrite extension-less paths to /index.html (SPA routing) without touching /api errors
+        Runtime: cloudfront-js-2.0
+      FunctionCode: |
+        function handler(event) {
+          var req = event.request;
+          if (req.uri.indexOf('.') === -1) { req.uri = '/index.html'; }
+          return req;
+        }
+
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub '${AWS::StackName} app + audio cache + api'
+        DefaultRootObject: index.html
+        HttpVersion: http2and3
+        PriceClass: PriceClass_100
+        Origins:
+          - Id: app
+            DomainName: !GetAtt AppBucket.RegionalDomainName
+            S3OriginConfig: { OriginAccessIdentity: '' }
+            OriginAccessControlId: !GetAtt OriginAccessControl.Id
+          - Id: audio
+            DomainName: !GetAtt AudioBucket.RegionalDomainName
+            S3OriginConfig: { OriginAccessIdentity: '' }
+            OriginAccessControlId: !GetAtt OriginAccessControl.Id
+          - Id: api
+            DomainName: !Sub '${HttpApi}.execute-api.${AWS::Region}.amazonaws.com'
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols: [TLSv1.2]
+              OriginReadTimeout: 30
+        DefaultCacheBehavior:
+          TargetOriginId: app
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD]
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # Managed-CachingOptimized
+          FunctionAssociations:
+            - EventType: viewer-request
+              FunctionARN: !GetAtt SpaRewriteFunction.FunctionMetadata.FunctionARN
+        CacheBehaviors:
+          - PathPattern: /audio-cache/*
+            TargetOriginId: audio
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods: [GET, HEAD]
+            Compress: false
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          - PathPattern: /api/*
+            TargetOriginId: api
+            ViewerProtocolPolicy: https-only
+            AllowedMethods: [GET, HEAD, OPTIONS, PUT, PATCH, POST, DELETE]
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # Managed-CachingDisabled
+            OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac # Managed-AllViewerExceptHostHeader
+
+  AppBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref AppBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: { Service: cloudfront.amazonaws.com }
+            Action: s3:GetObject
+            Resource: !Sub '${AppBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${Distribution}'
+
+  AudioBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref AudioBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: { Service: cloudfront.amazonaws.com }
+            Action: s3:GetObject
+            Resource: !Sub '${AudioBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${Distribution}'
+
+Outputs:
+  AppUrl:
+    Description: Add this URL (with trailing /) to CallbackUrls / LogoutUrls and to Google OAuth "Authorized redirect URIs" flow
+    Value: !Sub 'https://${Distribution.DomainName}/'
+  CognitoHostedUiDomain:
+    Value: !Sub '${CognitoDomainPrefix}.auth.${AWS::Region}.amazoncognito.com'
+  GoogleRedirectUriForGoogleConsole:
+    Description: Paste into Google Cloud Console > OAuth client > Authorized redirect URIs
+    Value: !Sub 'https://${CognitoDomainPrefix}.auth.${AWS::Region}.amazoncognito.com/oauth2/idpresponse'
+  UserPoolId:
+    Value: !Ref UserPool
+  UserPoolClientId:
+    Value: !Ref UserPoolClient
+  AppBucketName:
+    Value: !Ref AppBucket
+  DistributionId:
+    Value: !Ref Distribution
+  AudioBucketName:
+    Value: !Ref AudioBucket
