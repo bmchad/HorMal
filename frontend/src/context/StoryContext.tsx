@@ -19,6 +19,8 @@ interface StoryApi {
   error: string | null;
   prefetched: Story | null;
   prefetchState: PrefetchState;
+  historyOpen: boolean;
+  setHistoryOpen: (v: boolean) => void;
   generatorOpen: boolean;
   submitModalOpen: boolean;
   doubt: { open: boolean; context?: string };
@@ -61,6 +63,7 @@ export function StoryProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [prefetched, setPrefetched] = useState<Story | null>(null);
   const [prefetchState, setPrefetchState] = useState<PrefetchState>('idle');
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [generatorOpen, setGeneratorOpen] = useState(false);
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
   const [doubt, setDoubt] = useState<{ open: boolean; context?: string }>({ open: false });
@@ -218,6 +221,8 @@ export function StoryProvider({ children }: { children: ReactNode }) {
       setPrefetched(null);
       setPrefetchState('idle');
       applyStory(full.story, full.result);
+      setHistoryOpen(false);
+      document.getElementById('content-scroll')?.scrollTo({ top: 0, behavior: 'smooth' });
     },
     [applyStory],
   );
@@ -235,6 +240,8 @@ export function StoryProvider({ children }: { children: ReactNode }) {
       error,
       prefetched,
       prefetchState,
+      historyOpen,
+      setHistoryOpen,
       generatorOpen,
       submitModalOpen,
       doubt,
@@ -250,7 +257,7 @@ export function StoryProvider({ children }: { children: ReactNode }) {
       retryPrefetch: () => startPrefetch(story?.title),
       openStory,
     }),
-    [library, story, result, answers, order, booting, generating, evaluating, error, prefetched, prefetchState, generatorOpen, submitModalOpen, doubt, generate, submit, startNext, startPrefetch, openStory],
+    [library, story, result, answers, order, booting, generating, evaluating, error, prefetched, prefetchState, historyOpen, generatorOpen, submitModalOpen, doubt, generate, submit, startNext, startPrefetch, openStory],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

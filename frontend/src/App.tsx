@@ -5,6 +5,7 @@ import { AudioDock } from './components/AudioDock';
 import { BottomNav, type TabId } from './components/BottomNav';
 import { DoubtSheet } from './components/DoubtSheet';
 import { GeneratorSheet } from './components/GeneratorSheet';
+import { HistorySheet } from './components/HistorySheet';
 import { SubmitThemeSheet } from './components/SubmitThemeSheet';
 import { Header } from './components/Header';
 import { AppProvider, useApp } from './context/AppContext';
@@ -45,6 +46,7 @@ function Main() {
         <BottomNav tab={tab} onChange={setTab} />
         <GeneratorSheet />
         <SubmitThemeSheet />
+        <HistorySheet />
         <DoubtSheet />
       </StoryProvider>
     </AudioProvider>
