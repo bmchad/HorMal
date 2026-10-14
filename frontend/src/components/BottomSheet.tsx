@@ -30,7 +30,7 @@ export function BottomSheet({
 }: {
   open: boolean;
   onClose: () => void;
-  title: string;
+  title: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
   id: string;
@@ -48,7 +48,7 @@ export function BottomSheet({
   if (!open) return null;
 
   return (
-    <div className="absolute inset-0 z-40" role="dialog" aria-modal="true" aria-label={title}>
+    <div className="absolute inset-0 z-40" role="dialog" aria-modal="true" aria-label={typeof title === 'string' ? title : undefined}>
       <button
         aria-label={t('common.close')}
         className="absolute inset-0 animate-fade-in bg-ink-950/60 backdrop-blur-[2px]"

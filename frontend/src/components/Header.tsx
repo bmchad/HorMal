@@ -1,7 +1,7 @@
 import { useApp } from '../context/AppContext';
 import { useStory } from '../context/StoryContext';
 import { flagFor, voiceLabel } from '../lib/voices';
-import { PlusIcon } from './icons';
+import { HistoryIcon, PlusIcon } from './icons';
 
 export function Header() {
   const { profile, t, voiceVariant } = useApp();
@@ -50,7 +50,7 @@ export function Header() {
             className="inline-flex min-h-[38px] items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 text-xs font-semibold text-white backdrop-blur-md transition hover:bg-white/20 active:scale-95"
             title={t('header.history')}
           >
-            <span>📚</span>
+            <HistoryIcon width={16} height={16} className="text-brand-200" />
             <span className="hidden xs:inline">{t('header.history')}</span>
             {library.length > 0 && (
               <span className="rounded-full bg-accent-500 px-1.5 py-0.2 text-[10px] font-bold text-white shadow-xs">

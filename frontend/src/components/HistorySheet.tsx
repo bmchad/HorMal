@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { useStory } from '../context/StoryContext';
 import { flagFor } from '../lib/voices';
 import { BottomSheet } from './BottomSheet';
-import { CheckIcon, PlusIcon } from './icons';
+import { CheckIcon, HistoryIcon, PlusIcon } from './icons';
 
 const THEME_EMOJI: Record<string, string> = {
   fun_facts: '🤯',
@@ -53,7 +53,12 @@ export function HistorySheet() {
       id="sheet-history"
       open={historyOpen}
       onClose={() => setHistoryOpen(false)}
-      title={t('history.title')}
+      title={
+        <span className="flex items-center gap-2">
+          <HistoryIcon width={20} height={20} className="text-brand-600" />
+          <span>{t('history.title')}</span>
+        </span>
+      }
     >
       {library.length > 3 && (
         <div className="mb-3">
@@ -69,8 +74,8 @@ export function HistorySheet() {
 
       {library.length === 0 ? (
         <div className="py-8 text-center">
-          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-2xl text-brand-600">
-            📖
+          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
+            <HistoryIcon width={28} height={28} />
           </div>
           <p className="mx-auto max-w-xs text-[14px] leading-relaxed text-slate-600">
             {t('history.empty')}
