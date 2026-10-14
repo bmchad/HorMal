@@ -132,12 +132,13 @@ Open `http://localhost:5173/` in your browser (preferably in mobile responsive m
 
 ## Deploying to AWS (AWS SAM)
 
-### 1. Database Setup
-Create a PostgreSQL database (Neon, Supabase Free Tier, or AWS RDS Free Tier).
-Run the database migration:
-```bash
-psql "$DATABASE_URL" -f schema.sql
-```
+### 1. Database Setup (Supabase / PostgreSQL)
+1. Crie seu projeto gratuito no **[Supabase](https://supabase.com)** (região recomendada: `sa-east-1` São Paulo).
+2. **Integração Supabase-GitHub**:
+   - As migrations estão padronizadas na pasta `supabase/migrations/`.
+   - Conecte o repositório no Supabase Dashboard (**Project Settings > Integrations > GitHub**) para aplicar as migrations automaticamente a cada push na branch `main`.
+   - Alternativamente, você pode rodar a migration inicial colando o conteúdo de `supabase/migrations/20261014020000_init_hormal_schema.sql` no **SQL Editor** do Supabase.
+3. Copie a string de conexão em **Project Settings > Database > Connection string (URI)** (marcando *Mode: Transaction / Session* com `?sslmode=require`) e cole em `DATABASE_URL` no `.env`.
 
 ### 2. Google OAuth Credentials & Consent Screen
 1. Vá para o **Google Cloud Console > APIs e Serviços > Tela de consentimento OAuth (OAuth consent screen)**:

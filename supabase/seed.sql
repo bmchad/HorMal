@@ -1,0 +1,2 @@
+-- HörMal Seed Data (Optional)
+-- This file is executed when resetting local supabase database (supabase db reset)
