@@ -22,7 +22,7 @@ export const users = pgTable('users', {
   cefrLevel: varchar('cefr_level', { length: 4 }).notNull().default('A2'),
   preferredVoiceEngine: varchar('preferred_voice_engine', { length: 32 })
     .notNull()
-    .default('polly_generative'),
+    .default('google_cloud_tts'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

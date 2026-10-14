@@ -165,7 +165,7 @@ const defaultProfile: Profile = {
   uiLanguage: 'en',
   targetLanguage: 'de-DE',
   cefrLevel: 'A2',
-  preferredVoiceEngine: 'browser_natural',
+  preferredVoiceEngine: 'google_cloud_tts',
 };
 
 export const mockApi = {

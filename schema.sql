@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
   ui_language            VARCHAR(16) NOT NULL DEFAULT 'en',
   target_language        VARCHAR(16) NOT NULL DEFAULT 'de-DE',
   cefr_level             VARCHAR(4)  NOT NULL DEFAULT 'A2',
-  preferred_voice_engine VARCHAR(32) NOT NULL DEFAULT 'polly_generative',
+  preferred_voice_engine VARCHAR(32) NOT NULL DEFAULT 'google_cloud_tts',
   created_at             TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at             TIMESTAMPTZ NOT NULL DEFAULT now()
 );

@@ -52,7 +52,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const urlCache = useRef(new Map<string, Promise<string | null>>());
   const usingBrowserRef = useRef(false);
 
-  const engine = profile?.preferredVoiceEngine ?? 'browser_natural';
+  const engine = profile?.preferredVoiceEngine ?? 'google_cloud_tts';
   const lang = profile?.targetLanguage ?? 'de-DE';
   const live = useRef({ engine, lang, voiceVariant, t });
   live.current = { engine, lang, voiceVariant, t };

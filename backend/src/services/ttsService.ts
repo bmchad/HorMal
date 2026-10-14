@@ -54,11 +54,20 @@ let s3: S3Client | undefined;
 const getPolly = () => (polly ??= new PollyClient({}));
 const getS3 = () => (s3 ??= new S3Client({}));
 
+function resolveGoogleVoice(voiceId: string, language: string): string {
+  const list = GOOGLE_TTS_VOICES[language] ?? GOOGLE_TTS_VOICES['en-US'];
+  if (voiceId === 'neural2') return list[1] ?? list[0];
+  if (voiceId === 'chirp3_hd' || voiceId === 'chirp3' || !voiceId) return list[0];
+  if (voiceId.startsWith(language.slice(0, 2))) return voiceId;
+  return list[0];
+}
+
 async function synthesizeGoogleCloud(text: string, language: string, voiceId: string): Promise<Buffer> {
   const apiKey = process.env.GOOGLE_TTS_API_KEY || process.env.GEMINI_API_KEY;
   if (!apiKey) throw new HttpError(503, 'Google Cloud TTS API key is not configured');
 
-  const candidates = [voiceId, ...(GOOGLE_TTS_VOICES[language] ?? [])];
+  const resolved = resolveGoogleVoice(voiceId, language);
+  const candidates = [resolved, ...(GOOGLE_TTS_VOICES[language] ?? [])];
   const unique = [...new Set(candidates)];
   let lastErr: unknown;
 

@@ -22,7 +22,7 @@ const UI_LANG_KEY = 'hormal:uiLanguage';
 
 export function AppProvider({ children, enabled }: { children: ReactNode; enabled: boolean }) {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [voiceVariant, setVoiceVariantState] = useState(() => localStorage.getItem(VARIANT_KEY) ?? '');
+  const [voiceVariant, setVoiceVariantState] = useState(() => localStorage.getItem(VARIANT_KEY) ?? 'chirp3_hd');
   // Standard default language is English (en-US) unless user explicitly selects another language.
   const [uiLanguageState, setUiLanguageState] = useState<string>(
     () => localStorage.getItem(UI_LANG_KEY) || 'en-US',
