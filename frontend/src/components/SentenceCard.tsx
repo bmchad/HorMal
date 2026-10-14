@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
 import { useStory } from '../context/StoryContext';
 import type { Sentence } from '../types';
-import { GlobeIcon, HelpIcon, SpeakerIcon } from './icons';
+import { EyeIcon, EyeOffIcon, GlobeIcon, HelpIcon, SpeakerIcon } from './icons';
 
 const pill =
   'inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-xl px-2 text-[13px] font-semibold transition active:scale-95';
@@ -13,7 +13,18 @@ export function SentenceCard({ sentence, revealed, total }: { sentence: Sentence
   const audio = useAudio();
   const { openDoubt } = useStory();
   const [showTranslation, setShowTranslation] = useState(false);
+  const [localRevealed, setLocalRevealed] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setLocalRevealed(null);
+  }, [revealed]);
+
+  const isRevealed = localRevealed !== null ? localRevealed : revealed;
   const active = audio.isActive(sentence.index);
+
+  const toggleReveal = () => {
+    setLocalRevealed((cur) => !(cur !== null ? cur : revealed));
+  };
 
   return (
     <article
@@ -23,17 +34,40 @@ export function SentenceCard({ sentence, revealed, total }: { sentence: Sentence
       }`}
     >
       <div className="px-4 pb-2 pt-3.5">
-        <div className="mb-1.5 flex items-center justify-between">
-          <span className="font-display text-[11px] font-bold uppercase tracking-wider text-brand-600">
-            {sentence.index + 1} / {total}
-          </span>
-          {active && (
-            <span className="flex items-center gap-1 text-[11px] font-semibold text-accent-500 animate-fade-in">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-500" /> ♪
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-display text-[11px] font-bold uppercase tracking-wider text-brand-600">
+              {sentence.index + 1} / {total}
             </span>
-          )}
+            {active && (
+              <span className="flex items-center gap-1 text-[11px] font-semibold text-accent-500 animate-fade-in">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-500" /> ♪
+              </span>
+            )}
+          </div>
+          <button
+            id={`sentence-${sentence.index}-toggle-text`}
+            type="button"
+            onClick={toggleReveal}
+            aria-pressed={isRevealed}
+            title={isRevealed ? t('story.hide') : t('story.reveal')}
+            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-semibold transition active:scale-95 ${
+              isRevealed
+                ? 'bg-brand-100 text-brand-700 hover:bg-brand-200 ring-1 ring-brand-300/60'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200 ring-1 ring-slate-200'
+            }`}
+          >
+            {isRevealed ? <EyeOffIcon width={14} height={14} /> : <EyeIcon width={14} height={14} />}
+            <span>{isRevealed ? t('story.hide') : t('story.reveal')}</span>
+          </button>
         </div>
-        <p className={`blur-listen text-[17px] font-medium leading-snug text-slate-900 ${revealed ? 'revealed' : ''}`}>
+        <p
+          onClick={toggleReveal}
+          className={`blur-listen text-[17px] font-medium leading-snug text-slate-900 cursor-pointer transition-all duration-300 ${
+            isRevealed ? 'revealed' : ''
+          }`}
+          title={isRevealed ? t('story.hide') : t('story.reveal')}
+        >
           {sentence.target}
         </p>
         {showTranslation && (
