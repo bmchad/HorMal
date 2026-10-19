@@ -23,6 +23,7 @@ export const users = pgTable('users', {
   preferredVoiceEngine: varchar('preferred_voice_engine', { length: 32 })
     .notNull()
     .default('google_cloud_tts'),
+  difficultyMode: varchar('difficulty_mode', { length: 16 }).notNull().default('normal'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
@@ -36,6 +37,7 @@ export const stories = pgTable(
     targetLanguage: varchar('target_language', { length: 16 }).notNull(),
     uiLanguage: varchar('ui_language', { length: 16 }).notNull(),
     cefrLevel: varchar('cefr_level', { length: 4 }).notNull(),
+    difficultyMode: varchar('difficulty_mode', { length: 16 }).notNull().default('normal'),
     title: varchar('title', { length: 255 }).notNull(),
     createdByUserId: uuid('created_by_user_id').references(() => users.id, {
       onDelete: 'set null',

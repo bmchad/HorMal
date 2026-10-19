@@ -11,7 +11,9 @@ interface AppApi {
   setUiLanguage: (v: string) => void;
   voiceVariant: string;
   setVoiceVariant: (v: string) => void;
-  updatePreferences: (p: Partial<Pick<Profile, 'uiLanguage' | 'targetLanguage' | 'cefrLevel' | 'preferredVoiceEngine'>>) => Promise<void>;
+  updatePreferences: (
+    p: Partial<Pick<Profile, 'uiLanguage' | 'targetLanguage' | 'cefrLevel' | 'preferredVoiceEngine' | 'difficultyMode'>>,
+  ) => Promise<void>;
   signOut: () => Promise<void>;
   reloadProfile: () => Promise<void>;
 }

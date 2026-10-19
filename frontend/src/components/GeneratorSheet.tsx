@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useStory } from '../context/StoryContext';
-import { THEMES, type ThemeId } from '../types';
+import { THEMES, type DifficultyMode, type ThemeId } from '../types';
 import { BottomSheet } from './BottomSheet';
 
 const THEME_EMOJI: Record<ThemeId, string> = {
@@ -17,15 +17,22 @@ const THEME_EMOJI: Record<ThemeId, string> = {
   sports_pop: '🎸',
 };
 
-/** "✨ Generate New Story" slide-up sheet: 2-column theme grid + optional keywords. */
+/** "✨ Generate New Story" slide-up sheet: 2-column theme grid + optional keywords + difficulty mode. */
 export function GeneratorSheet() {
-  const { t } = useApp();
+  const { profile, t } = useApp();
   const { generatorOpen, setGeneratorOpen, generate, generating, error } = useStory();
   const [theme, setTheme] = useState<ThemeId>('fun_facts');
+  const [difficulty, setDifficulty] = useState<DifficultyMode>(() => profile?.difficultyMode ?? 'normal');
   const [extra, setExtra] = useState('');
 
+  useEffect(() => {
+    if (profile?.difficultyMode) {
+      setDifficulty(profile.difficultyMode);
+    }
+  }, [profile?.difficultyMode]);
+
   const go = async () => {
-    const ok = await generate(theme, extra);
+    const ok = await generate(theme, extra, difficulty);
     if (ok) setGeneratorOpen(false);
   };
 
@@ -74,6 +81,51 @@ export function GeneratorSheet() {
             </button>
           );
         })}
+      </div>
+
+      <p className="mb-2 mt-4 text-[12px] font-bold uppercase tracking-wider text-slate-400">
+        {t('sheet.generate.difficulty')}
+      </p>
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          id="sheet-diff-normal"
+          onClick={() => setDifficulty('normal')}
+          aria-pressed={difficulty === 'normal'}
+          className={`flex flex-col items-start rounded-2xl border p-3 text-left transition active:scale-[0.98] ${
+            difficulty === 'normal'
+              ? 'border-emerald-500 bg-emerald-50 text-emerald-950 shadow-sm ring-2 ring-emerald-500/30'
+              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+          }`}
+        >
+          <div className="flex items-center gap-1.5 font-bold text-[13px]">
+            <span>🟢</span>
+            <span>{t('difficulty.normal')}</span>
+          </div>
+          <span className="mt-1 text-[11px] leading-tight text-slate-500">
+            {t('difficulty.normal.desc')}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          id="sheet-diff-hard"
+          onClick={() => setDifficulty('hard')}
+          aria-pressed={difficulty === 'hard'}
+          className={`flex flex-col items-start rounded-2xl border p-3 text-left transition active:scale-[0.98] ${
+            difficulty === 'hard'
+              ? 'border-amber-500 bg-amber-50 text-amber-950 shadow-sm ring-2 ring-amber-500/30'
+              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+          }`}
+        >
+          <div className="flex items-center gap-1.5 font-bold text-[13px]">
+            <span>⚡</span>
+            <span>{t('difficulty.hard')}</span>
+          </div>
+          <span className="mt-1 text-[11px] leading-tight text-slate-500">
+            {t('difficulty.hard.desc')}
+          </span>
+        </button>
       </div>
 
       <label htmlFor="additional-instructions" className="mb-1.5 mt-4 block text-[12px] font-bold uppercase tracking-wider text-slate-400">

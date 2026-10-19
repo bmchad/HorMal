@@ -166,6 +166,7 @@ const defaultProfile: Profile = {
   targetLanguage: 'de-DE',
   cefrLevel: 'A2',
   preferredVoiceEngine: 'google_cloud_tts',
+  difficultyMode: 'normal',
 };
 
 export const mockApi = {

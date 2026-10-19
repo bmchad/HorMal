@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useStory } from '../context/StoryContext';
-import { THEMES, type ThemeId } from '../types';
+import { THEMES, type DifficultyMode, type ThemeId } from '../types';
 import { BottomSheet } from './BottomSheet';
 
 const THEME_EMOJI: Record<ThemeId, string> = {
@@ -19,18 +19,29 @@ const THEME_EMOJI: Record<ThemeId, string> = {
 
 /**
  * Slide-up Bottom Sheet opened upon clicking "Submit & Correct" (docs/corrections/2.md).
- * Lets the learner pick the theme for the next story, which starts generating in the background
+ * Lets the learner pick the theme and difficulty for the next story, which starts generating in the background
  * immediately while Agent 2 evaluates their answers.
  */
 export function SubmitThemeSheet() {
-  const { t } = useApp();
+  const { profile, t } = useApp();
   const { submitModalOpen, setSubmitModalOpen, submit, evaluating, story } = useStory();
   const [theme, setTheme] = useState<ThemeId>(() => (story?.theme as ThemeId) ?? 'fun_facts');
+  const [difficulty, setDifficulty] = useState<DifficultyMode>(
+    () => story?.difficultyMode ?? profile?.difficultyMode ?? 'normal',
+  );
   const [extra, setExtra] = useState('');
+
+  useEffect(() => {
+    if (story?.difficultyMode) {
+      setDifficulty(story.difficultyMode);
+    } else if (profile?.difficultyMode) {
+      setDifficulty(profile.difficultyMode);
+    }
+  }, [story?.difficultyMode, profile?.difficultyMode]);
 
   const confirmSubmit = async () => {
     setSubmitModalOpen(false);
-    await submit(theme, extra);
+    await submit(theme, extra, difficulty);
   };
 
   return (
@@ -80,6 +91,51 @@ export function SubmitThemeSheet() {
             </button>
           );
         })}
+      </div>
+
+      <p className="mb-2 mt-4 text-[12px] font-bold uppercase tracking-wider text-slate-400">
+        {t('sheet.generate.difficulty')}
+      </p>
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          id="submit-diff-normal"
+          onClick={() => setDifficulty('normal')}
+          aria-pressed={difficulty === 'normal'}
+          className={`flex flex-col items-start rounded-2xl border p-3 text-left transition active:scale-[0.98] ${
+            difficulty === 'normal'
+              ? 'border-emerald-500 bg-emerald-50 text-emerald-950 shadow-sm ring-2 ring-emerald-500/30'
+              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+          }`}
+        >
+          <div className="flex items-center gap-1.5 font-bold text-[13px]">
+            <span>🟢</span>
+            <span>{t('difficulty.normal')}</span>
+          </div>
+          <span className="mt-1 text-[11px] leading-tight text-slate-500">
+            {t('difficulty.normal.desc')}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          id="submit-diff-hard"
+          onClick={() => setDifficulty('hard')}
+          aria-pressed={difficulty === 'hard'}
+          className={`flex flex-col items-start rounded-2xl border p-3 text-left transition active:scale-[0.98] ${
+            difficulty === 'hard'
+              ? 'border-amber-500 bg-amber-50 text-amber-950 shadow-sm ring-2 ring-amber-500/30'
+              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+          }`}
+        >
+          <div className="flex items-center gap-1.5 font-bold text-[13px]">
+            <span>⚡</span>
+            <span>{t('difficulty.hard')}</span>
+          </div>
+          <span className="mt-1 text-[11px] leading-tight text-slate-500">
+            {t('difficulty.hard.desc')}
+          </span>
+        </button>
       </div>
 
       <label htmlFor="submit-additional-instructions" className="mb-1.5 mt-4 block text-[12px] font-bold uppercase tracking-wider text-slate-400">

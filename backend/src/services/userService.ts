@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import type { APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda';
 import { getDb, schema } from '../db/client';
-import { CEFR_LEVELS, TARGET_LANGUAGES, UI_LANGUAGES, VOICE_ENGINES } from '../lib/constants';
+import { CEFR_LEVELS, DIFFICULTY_MODES, TARGET_LANGUAGES, UI_LANGUAGES, VOICE_ENGINES, type DifficultyMode } from '../lib/constants';
 import { HttpError } from '../lib/http';
 
 const { users } = schema;
@@ -19,6 +19,7 @@ export function toClientUser(u: UserRow) {
     targetLanguage: u.targetLanguage,
     cefrLevel: u.cefrLevel,
     preferredVoiceEngine: u.preferredVoiceEngine,
+    difficultyMode: (u.difficultyMode as DifficultyMode) ?? 'normal',
   };
 }
 
@@ -49,6 +50,7 @@ export const preferencesSchema = z
     targetLanguage: z.enum(TARGET_LANGUAGES),
     cefrLevel: z.enum(CEFR_LEVELS),
     preferredVoiceEngine: z.enum(VOICE_ENGINES),
+    difficultyMode: z.enum(DIFFICULTY_MODES),
   })
   .partial();
 

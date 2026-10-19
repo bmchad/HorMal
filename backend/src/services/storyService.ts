@@ -12,6 +12,7 @@ export interface ClientStory {
   targetLanguage: string;
   uiLanguage: string;
   cefrLevel: string;
+  difficultyMode: string;
   createdAt: string;
   sentences: { index: number; target: string; ui: string }[];
   questions: { id: number; order: number; questionTarget: string; questionUi: string }[];
@@ -50,6 +51,7 @@ export function toClientStory(rows: FullStoryRows): ClientStory {
     targetLanguage: story.targetLanguage,
     uiLanguage: story.uiLanguage,
     cefrLevel: story.cefrLevel,
+    difficultyMode: story.difficultyMode ?? 'normal',
     createdAt: story.createdAt.toISOString(),
     sentences: sentences.map((s) => ({ index: s.sentenceIndex, target: s.textTarget, ui: s.textUi })),
     questions: questions.map((q) => ({
@@ -70,6 +72,7 @@ export async function listStories(userId: string, limit = 60) {
       theme: stories.theme,
       targetLanguage: stories.targetLanguage,
       cefrLevel: stories.cefrLevel,
+      difficultyMode: stories.difficultyMode,
       createdAt: stories.createdAt,
       score: userProgress.score,
     })

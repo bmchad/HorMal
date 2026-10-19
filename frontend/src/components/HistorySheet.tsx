@@ -155,6 +155,10 @@ export function HistorySheet() {
                   <div className="flex items-center gap-1.5">
                     <span>{flagFor(s.targetLanguage)}</span>
                     <span className="font-semibold text-slate-600">{s.cefrLevel}</span>
+                    <span className="text-slate-300">•</span>
+                    <span className={`font-semibold ${s.difficultyMode === 'hard' ? 'text-amber-600' : 'text-emerald-600'}`}>
+                      {s.difficultyMode === 'hard' ? '⚡ ' + t('difficulty.hard') : '🟢 ' + t('difficulty.normal')}
+                    </span>
                   </div>
                   <span>{new Date(s.createdAt).toLocaleDateString()}</span>
                 </div>

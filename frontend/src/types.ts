@@ -14,6 +14,7 @@ export type UiLanguage =
   | 'fr'
   | 'it';
 export type CefrLevel = 'A1' | 'A2' | 'B1' | 'B2';
+export type DifficultyMode = 'normal' | 'hard';
 
 export const THEMES = [
   'fun_facts',
@@ -38,6 +39,7 @@ export interface Profile {
   targetLanguage: TargetLanguage;
   cefrLevel: CefrLevel;
   preferredVoiceEngine: VoiceEngine;
+  difficultyMode?: DifficultyMode;
 }
 
 export interface Sentence {
@@ -61,6 +63,7 @@ export interface Story {
   targetLanguage: TargetLanguage;
   uiLanguage: UiLanguage;
   cefrLevel: CefrLevel;
+  difficultyMode?: DifficultyMode;
   createdAt: string;
   sentences: Sentence[];
   questions: Question[];
@@ -72,6 +75,7 @@ export interface StorySummary {
   theme: string;
   targetLanguage: string;
   cefrLevel: string;
+  difficultyMode?: DifficultyMode;
   createdAt: string;
   score: number | null;
 }

@@ -7,8 +7,9 @@ export function Header() {
   const { profile, t, voiceVariant } = useApp();
   const { story, library, setGeneratorOpen, setHistoryOpen, generating } = useStory();
 
+  const diffEmoji = (story?.difficultyMode ?? profile?.difficultyMode ?? 'normal') === 'hard' ? '⚡' : '🟢';
   const pill = profile
-    ? `${flagFor(profile.targetLanguage)} ${profile.cefrLevel} • ${voiceLabel(profile.preferredVoiceEngine, profile.targetLanguage, voiceVariant)}`
+    ? `${flagFor(profile.targetLanguage)} ${profile.cefrLevel} ${diffEmoji} • ${voiceLabel(profile.preferredVoiceEngine, profile.targetLanguage, voiceVariant)}`
     : '';
 
   return (

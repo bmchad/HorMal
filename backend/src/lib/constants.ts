@@ -20,6 +20,9 @@ export const UI_LANGUAGES = [
 ] as const;
 export const CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2'] as const;
 
+export const DIFFICULTY_MODES = ['normal', 'hard'] as const;
+export type DifficultyMode = (typeof DIFFICULTY_MODES)[number];
+
 export const THEMES = [
   'fun_facts',
   'science_nature',

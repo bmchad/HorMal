@@ -42,6 +42,7 @@ export interface GenerateStoryInput {
   theme: ThemeId;
   additionalInstructions?: string;
   excludeRecentTitles?: string[];
+  difficultyMode?: 'normal' | 'hard';
 }
 
 export interface StoryWithResult {
@@ -51,8 +52,9 @@ export interface StoryWithResult {
 
 const real = {
   getMe: () => request<Profile>('GET', '/api/me'),
-  patchPreferences: (p: Partial<Pick<Profile, 'uiLanguage' | 'targetLanguage' | 'cefrLevel' | 'preferredVoiceEngine'>>) =>
-    request<Profile>('PATCH', '/api/me/preferences', p),
+  patchPreferences: (
+    p: Partial<Pick<Profile, 'uiLanguage' | 'targetLanguage' | 'cefrLevel' | 'preferredVoiceEngine' | 'difficultyMode'>>,
+  ) => request<Profile>('PATCH', '/api/me/preferences', p),
   listStories: () => request<{ stories: StorySummary[] }>('GET', '/api/stories').then((r) => r.stories),
   getStory: (id: string) => request<StoryWithResult>('GET', `/api/stories/${id}`),
   generateStory: (input: GenerateStoryInput) =>

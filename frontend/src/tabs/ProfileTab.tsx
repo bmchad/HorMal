@@ -105,6 +105,52 @@ export function ProfileTab() {
         </div>
       </Card>
 
+      <Card title={t('profile.difficulty')}>
+        <div className="grid grid-cols-2 gap-2" role="radiogroup">
+          <button
+            type="button"
+            id="profile-diff-normal"
+            role="radio"
+            aria-checked={(profile.difficultyMode ?? 'normal') === 'normal'}
+            onClick={() => save({ difficultyMode: 'normal' })}
+            className={`flex flex-col items-start rounded-2xl border p-3 text-left transition active:scale-[0.98] ${
+              (profile.difficultyMode ?? 'normal') === 'normal'
+                ? 'border-emerald-500 bg-emerald-50 text-emerald-950 shadow-sm ring-2 ring-emerald-500/30'
+                : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            <div className="flex items-center gap-1.5 font-bold text-[13px]">
+              <span>🟢</span>
+              <span>{t('difficulty.normal')}</span>
+            </div>
+            <span className="mt-1 text-[11px] leading-tight text-slate-500">
+              {t('difficulty.normal.desc')}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            id="profile-diff-hard"
+            role="radio"
+            aria-checked={profile.difficultyMode === 'hard'}
+            onClick={() => save({ difficultyMode: 'hard' })}
+            className={`flex flex-col items-start rounded-2xl border p-3 text-left transition active:scale-[0.98] ${
+              profile.difficultyMode === 'hard'
+                ? 'border-amber-500 bg-amber-50 text-amber-950 shadow-sm ring-2 ring-amber-500/30'
+                : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            <div className="flex items-center gap-1.5 font-bold text-[13px]">
+              <span>⚡</span>
+              <span>{t('difficulty.hard')}</span>
+            </div>
+            <span className="mt-1 text-[11px] leading-tight text-slate-500">
+              {t('difficulty.hard.desc')}
+            </span>
+          </button>
+        </div>
+      </Card>
+
       <Card title={t('profile.voiceEngine')}>
         <div className="space-y-2" role="radiogroup">
           {ENGINES.map((e) => {

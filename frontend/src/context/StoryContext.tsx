@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { api } from '../lib/api';
-import type { EvalResult, Story, StorySummary, ThemeId } from '../types';
+import type { DifficultyMode, EvalResult, Story, StorySummary, ThemeId } from '../types';
 import { useApp } from './AppContext';
 import { useAudio } from './AudioContext';
 
@@ -30,8 +30,8 @@ interface StoryApi {
   closeDoubt: () => void;
   setAnswer: (questionId: number, text: string) => void;
   shuffle: () => void;
-  generate: (theme: ThemeId, additionalInstructions?: string) => Promise<boolean>;
-  submit: (nextTheme?: ThemeId, nextInstructions?: string) => Promise<void>;
+  generate: (theme: ThemeId, additionalInstructions?: string, difficultyMode?: DifficultyMode) => Promise<boolean>;
+  submit: (nextTheme?: ThemeId, nextInstructions?: string, nextDifficulty?: DifficultyMode) => Promise<void>;
   startNext: () => void;
   retryPrefetch: () => void;
   openStory: (id: string) => Promise<void>;
@@ -68,8 +68,11 @@ export function StoryProvider({ children }: { children: ReactNode }) {
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
   const [doubt, setDoubt] = useState<{ open: boolean; context?: string }>({ open: false });
 
-  // Active theme / keywords used for background pre-generation of the next story.
-  const activeParams = useRef<{ theme: ThemeId; additionalInstructions?: string }>({ theme: 'fun_facts' });
+  // Active theme / keywords / difficulty used for background pre-generation of the next story.
+  const activeParams = useRef<{ theme: ThemeId; additionalInstructions?: string; difficultyMode?: DifficultyMode }>({
+    theme: 'fun_facts',
+    difficultyMode: 'normal',
+  });
   const prefetchRunId = useRef(0);
   const setQueueRef = useRef(audio.setQueue);
   setQueueRef.current = audio.setQueue;
@@ -86,14 +89,15 @@ export function StoryProvider({ children }: { children: ReactNode }) {
     activeParams.current = {
       theme: (s.theme as ThemeId) ?? 'fun_facts',
       additionalInstructions: s.additionalInstructions ?? undefined,
+      difficultyMode: s.difficultyMode ?? profile?.difficultyMode ?? 'normal',
     };
-  }, []);
+  }, [profile?.difficultyMode]);
 
   const addToLibrary = useCallback((s: Story) => {
     setLibrary((cur) =>
       cur.some((x) => x.id === s.id)
         ? cur
-        : [{ id: s.id, title: s.title, theme: s.theme, targetLanguage: s.targetLanguage, cefrLevel: s.cefrLevel, createdAt: s.createdAt, score: null }, ...cur],
+        : [{ id: s.id, title: s.title, theme: s.theme, targetLanguage: s.targetLanguage, cefrLevel: s.cefrLevel, difficultyMode: s.difficultyMode, createdAt: s.createdAt, score: null }, ...cur],
     );
   }, []);
 
@@ -130,17 +134,23 @@ export function StoryProvider({ children }: { children: ReactNode }) {
   );
 
   const generate = useCallback(
-    async (theme: ThemeId, additionalInstructions?: string) => {
+    async (theme: ThemeId, additionalInstructions?: string, difficultyMode?: DifficultyMode) => {
       setGenerating(true);
       setError(null);
       try {
         const extra = additionalInstructions?.trim() || undefined;
-        const s = await api.generateStory({ theme, additionalInstructions: extra, excludeRecentTitles: excludeTitles() });
+        const mode = difficultyMode ?? profile?.difficultyMode ?? 'normal';
+        const s = await api.generateStory({
+          theme,
+          additionalInstructions: extra,
+          difficultyMode: mode,
+          excludeRecentTitles: excludeTitles(),
+        });
         prefetchRunId.current++; // invalidate any in-flight prefetch for the old story
         setPrefetched(null);
         setPrefetchState('idle');
         applyStory(s, null);
-        activeParams.current = { theme, additionalInstructions: extra };
+        activeParams.current = { theme, additionalInstructions: extra, difficultyMode: mode };
         addToLibrary(s);
         document.getElementById('content-scroll')?.scrollTo({ top: 0, behavior: 'smooth' });
         return true;
@@ -151,7 +161,7 @@ export function StoryProvider({ children }: { children: ReactNode }) {
         setGenerating(false);
       }
     },
-    [addToLibrary, applyStory, excludeTitles, t],
+    [addToLibrary, applyStory, excludeTitles, profile?.difficultyMode, t],
   );
 
   /** AUTOMATIC BACKGROUND PRE-GENERATION: fires Agent 1 the moment corrections resolve. */
@@ -160,9 +170,14 @@ export function StoryProvider({ children }: { children: ReactNode }) {
       const run = ++prefetchRunId.current;
       setPrefetched(null);
       setPrefetchState('loading');
-      const { theme, additionalInstructions } = activeParams.current;
+      const { theme, additionalInstructions, difficultyMode } = activeParams.current;
       api
-        .generateStory({ theme, additionalInstructions, excludeRecentTitles: excludeTitles(currentTitle) })
+        .generateStory({
+          theme,
+          additionalInstructions,
+          difficultyMode: difficultyMode ?? profile?.difficultyMode ?? 'normal',
+          excludeRecentTitles: excludeTitles(currentTitle),
+        })
         .then((s) => {
           if (run !== prefetchRunId.current) return;
           setPrefetched(s);
@@ -174,16 +189,17 @@ export function StoryProvider({ children }: { children: ReactNode }) {
           if (run === prefetchRunId.current) setPrefetchState('error');
         });
     },
-    [addToLibrary, excludeTitles],
+    [addToLibrary, excludeTitles, profile?.difficultyMode],
   );
 
   const submit = useCallback(
-    async (nextTheme?: ThemeId, nextInstructions?: string) => {
+    async (nextTheme?: ThemeId, nextInstructions?: string, nextDifficulty?: DifficultyMode) => {
       if (!story || evaluating) return;
       if (nextTheme) {
         activeParams.current = {
           theme: nextTheme,
           additionalInstructions: nextInstructions?.trim() || undefined,
+          difficultyMode: nextDifficulty ?? activeParams.current.difficultyMode ?? profile?.difficultyMode ?? 'normal',
         };
       }
       setEvaluating(true);
@@ -203,7 +219,7 @@ export function StoryProvider({ children }: { children: ReactNode }) {
         setEvaluating(false);
       }
     },
-    [answers, evaluating, startPrefetch, story, t],
+    [answers, evaluating, profile?.difficultyMode, startPrefetch, story, t],
   );
 
   const startNext = useCallback(() => {
