@@ -65,6 +65,14 @@ This directory and document serve as the persistent project context and decision
   - Added JLPT N5/N4 and HSK 1/2 didactic calibrations in `storyGenerator` and `conversationAgent`.
   - Added language-specific voice note topics and Web Speech STT support in `ConversationTab`.
 
+### Decision 009: App Interface Language Expansion (Japanese & Mandarin)
+- **UI Localization**:
+  - Expanded `UiLanguage` and `UI_LANGUAGES` support to include Japanese (`ja-JP` / 日本語 🇯🇵) and Mandarin Chinese (`zh-CN` / 简体中文 🇨🇳).
+  - Added full native localized translation dictionaries in `frontend/src/i18n.ts` covering all interface features: navigation tabs, story generation, listening practice, audio controls, comprehension quizzes, grammar doubt tutor, conversation tab, vocabulary bookmarks, profile preferences, and dynamic theme labels.
+  - Normalized language code matching in `makeTranslator` to support both BCP-47 identifiers (`ja-JP`, `zh-CN`) and ISO-639 2-letter codes (`ja`, `zh`).
+  - Updated language pickers in landing/login view (`LoginScreen.tsx`) and profile tab (`ProfileTab.tsx`) with 8 interface options in responsive grid layouts.
+  - Updated backend profile update validator in `backend/src/lib/constants.ts` to accept `ja-JP`, `zh-CN`, `ja`, and `zh` for persistence in PostgreSQL.
+
 ---
 
 ## 3. Deployment Runbook

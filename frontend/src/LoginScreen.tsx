@@ -22,6 +22,8 @@ function isLangActive(current: string, optValue: string) {
   if ((current === 'de' || current === 'de-DE') && (optValue === 'de' || optValue === 'de-DE')) return true;
   if ((current === 'fr' || current === 'fr-FR') && (optValue === 'fr' || optValue === 'fr-FR')) return true;
   if ((current === 'it' || current === 'it-IT') && (optValue === 'it' || optValue === 'it-IT')) return true;
+  if ((current === 'ja' || current === 'ja-JP') && (optValue === 'ja' || optValue === 'ja-JP')) return true;
+  if ((current === 'zh' || current === 'zh-CN') && (optValue === 'zh' || optValue === 'zh-CN')) return true;
   return false;
 }
 
@@ -90,7 +92,7 @@ export function LoginScreen() {
           </span>
         </div>
 
-        <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label={t('profile.siteLanguage')}>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2" role="radiogroup" aria-label={t('profile.siteLanguage')}>
           {LANGUAGE_OPTIONS.map((opt) => {
             const active = isLangActive(uiLanguage, opt.value);
             return (

@@ -7,12 +7,16 @@ export type UiLanguage =
   | 'it-IT'
   | 'en-US'
   | 'pt-BR'
+  | 'ja-JP'
+  | 'zh-CN'
   | 'en'
   | 'pt-BR'
   | 'es'
   | 'de'
   | 'fr'
-  | 'it';
+  | 'it'
+  | 'ja'
+  | 'zh';
 export type CefrLevel = 'A1' | 'A2' | 'B1' | 'B2';
 export type DifficultyMode = 'normal' | 'hard';
 

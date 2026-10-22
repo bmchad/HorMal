@@ -77,7 +77,9 @@ export function ProfileTab() {
               (profile.uiLanguage === 'es' && o.value === 'es-ES') ||
               (profile.uiLanguage === 'de' && o.value === 'de-DE') ||
               (profile.uiLanguage === 'fr' && o.value === 'fr-FR') ||
-              (profile.uiLanguage === 'it' && o.value === 'it-IT');
+              (profile.uiLanguage === 'it' && o.value === 'it-IT') ||
+              (profile.uiLanguage === 'ja' && o.value === 'ja-JP') ||
+              (profile.uiLanguage === 'zh' && o.value === 'zh-CN');
             return (
               <button key={o.value} id={`ui-lang-${o.value}`} className={chip(active)} onClick={() => save({ uiLanguage: o.value })}>
                 {o.flag} {o.label}

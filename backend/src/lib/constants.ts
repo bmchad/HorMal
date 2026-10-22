@@ -11,12 +11,16 @@ export const UI_LANGUAGES = [
   'it-IT',
   'en-US',
   'pt-BR',
+  'ja-JP',
+  'zh-CN',
   'en',
   'pt-BR',
   'es',
   'de',
   'fr',
   'it',
+  'ja',
+  'zh',
 ] as const;
 export const CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2'] as const;
 
