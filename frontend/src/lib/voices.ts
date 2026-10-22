@@ -7,6 +7,8 @@ export const LANGUAGE_OPTIONS: { value: TargetLanguage; label: string; flag: str
   { value: 'it-IT', label: 'Italiano', flag: '🇮🇹' },
   { value: 'en-US', label: 'English', flag: '🇺🇸' },
   { value: 'pt-BR', label: 'Português (BR)', flag: '🇧🇷' },
+  { value: 'ja-JP', label: '日本語 (Japonês)', flag: '🇯🇵' },
+  { value: 'zh-CN', label: '中文 (Mandarim)', flag: '🇨🇳' },
 ];
 
 export const flagFor = (lang: string) => LANGUAGE_OPTIONS.find((l) => l.value === lang)?.flag ?? '🌐';
@@ -19,6 +21,8 @@ const POLLY_NAME: Record<string, string> = {
   'it-IT': 'Beatrice',
   'en-US': 'Ruth',
   'pt-BR': 'Camila',
+  'ja-JP': 'Kazuha',
+  'zh-CN': 'Zhiyu',
 };
 
 export const VOICE_VARIANTS: Record<
@@ -48,6 +52,7 @@ const FEMININE_HINTS = [
   'natural', 'online', 'google', 'katja', 'vicki', 'anna', 'helena', 'paulina', 'female', 'amala', 'seraphina',
   'elke', 'marlene', 'hedda', 'denise', 'eloise', 'elvira', 'dalia', 'lucia', 'laura', 'elsa', 'isabella', 'francisca',
   'maria', 'luciana', 'ava', 'jenny', 'aria', 'samantha', 'amelie', 'audrey', 'monica', 'alice', 'zira',
+  'kazuha', 'tomoko', 'mizuki', 'zhiyu', 'kyoko', 'sayaka', 'huihui', 'yaoyao', 'tingting',
 ];
 const MASCULINE_HINTS = ['male', 'conrad', 'stefan', 'killian', 'hans', 'markus', 'claude', 'henri', 'jorge', 'diego', 'alvaro', 'antonio', 'guy', 'ryan', 'daniel', 'thomas', 'felipe', 'david'];
 

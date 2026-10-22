@@ -15,6 +15,8 @@ const SAMPLE: Record<string, string> = {
   'it-IT': 'Ciao! Sono la tua voce per ascoltare e imparare.',
   'en-US': 'Hi! I am your voice for listening and learning.',
   'pt-BR': 'Olá! Eu sou a sua voz para ouvir e aprender.',
+  'ja-JP': 'こんにちは！私はあなたのリスニングと学習のための声です。',
+  'zh-CN': '你好！我是你的中文听力和学习语音。',
 };
 
 function Card({ title, children }: { title: string; children: ReactNode }) {

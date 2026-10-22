@@ -30,6 +30,17 @@ export function ConversationTab() {
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const recognitionRef = useRef<any>(null);
 
+  // Silent 1-sample WAV used to unlock mobile and desktop browser autoplay policy on user tap
+  const unlockAudio = useCallback(() => {
+    try {
+      if (!audioElementRef.current) {
+        audioElementRef.current = new Audio();
+      }
+      audioElementRef.current.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+      void audioElementRef.current.play().catch(() => {});
+    } catch {}
+  }, []);
+
   // Load existing conversation on mount or language change
   const loadConversation = useCallback(async () => {
     try {
@@ -67,7 +78,7 @@ export function ConversationTab() {
     };
   }, []);
 
-  // Audio playback handler
+  // Audio playback handler (re-uses pre-unlocked audio element for 100% reliable autoplay)
   const playAudio = useCallback(
     (msg: ConversationMessage) => {
       // If already playing this message, toggle pause
@@ -83,16 +94,15 @@ export function ConversationTab() {
         }
       }
 
-      // Stop previous audio
-      if (audioElementRef.current) {
-        audioElementRef.current.pause();
-        audioElementRef.current = null;
-      }
-
       if (msg.audioUrl) {
-        const audio = new Audio(msg.audioUrl);
+        let audio = audioElementRef.current;
+        if (!audio) {
+          audio = new Audio();
+          audioElementRef.current = audio;
+        }
+        audio.pause();
+        audio.src = msg.audioUrl;
         audio.playbackRate = playbackRate;
-        audioElementRef.current = audio;
         setPlayingMessageId(msg.id);
 
         audio.ontimeupdate = () => {
@@ -115,11 +125,14 @@ export function ConversationTab() {
           setPlayingMessageId(null);
         };
 
-        audio.play().catch((err) => {
-          console.warn('Autoplay blocked or error:', err);
-          audioContext.speakOnce(msg.textTarget);
-          setPlayingMessageId(null);
-        });
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.warn('Autoplay blocked or error:', err);
+            audioContext.speakOnce(msg.textTarget);
+            setPlayingMessageId(null);
+          });
+        }
       } else {
         // Fallback to audioContext synthesis
         audioContext.speakOnce(msg.textTarget);
@@ -152,6 +165,9 @@ export function ConversationTab() {
     const content = (textToSend ?? inputText).trim();
     if (!content || sending) return;
 
+    // Unlock audio playback immediately on user gesture so autoplay works after async fetch
+    unlockAudio();
+
     setInputText('');
     setSending(true);
     setSttError(null);
@@ -173,11 +189,9 @@ export function ConversationTab() {
         };
       });
 
-      // Autoplay tutor audio response
+      // Autoplay tutor audio response immediately
       if (res.modelMessage) {
-        setTimeout(() => {
-          playAudio(res.modelMessage);
-        }, 200);
+        playAudio(res.modelMessage);
       }
     } catch (err) {
       console.error('Failed to send conversation message:', err);
@@ -189,11 +203,11 @@ export function ConversationTab() {
   // Reset conversation
   const handleResetConversation = async () => {
     if (sending) return;
+    unlockAudio();
     try {
       setLoading(true);
       if (audioElementRef.current) {
         audioElementRef.current.pause();
-        audioElementRef.current = null;
       }
       setPlayingMessageId(null);
       const newConv = await api.resetConversation();
@@ -201,9 +215,7 @@ export function ConversationTab() {
       setRevealedIds(new Set());
       // Autoplay initial welcome audio
       if (newConv.messages.length > 0 && newConv.messages[0].audioUrl) {
-        setTimeout(() => {
-          playAudio(newConv.messages[0]);
-        }, 300);
+        playAudio(newConv.messages[0]);
       }
     } catch (err) {
       console.error('Failed to reset conversation:', err);
@@ -290,11 +302,49 @@ export function ConversationTab() {
     }
   };
 
-  const quickTopics = [
-    { title: t('conversation.topic1'), prompt: 'Hallo! Ich möchte mich gerne vorstellen und mein Deutsch üben.' },
-    { title: t('conversation.topic2'), prompt: 'Guten Tag! Ich möchte etwas zu essen bestellen, was empfehlen Sie?' },
-    { title: t('conversation.topic3'), prompt: 'Erzähl mir von deinen Lieblingsreisezielen und warum sie so besonders sind.' },
-  ];
+  const quickTopics = (() => {
+    const lang = profile?.targetLanguage;
+    if (lang === 'ja-JP') {
+      return [
+        { title: '自己紹介 (Apresentação)', prompt: 'こんにちは！自己紹介をして、日本語を練習したいです。' },
+        { title: '食事の注文 (Pedir comida)', prompt: 'すみません、おすすめの日本料理は何ですか？' },
+        { title: '日本旅行 (Viagem no Japão)', prompt: '日本のおすすめの旅行先を教えてください。' },
+      ];
+    }
+    if (lang === 'zh-CN') {
+      return [
+        { title: '自我介绍 (Apresentação)', prompt: '你好！我想介绍一下自己，并练习普通话。' },
+        { title: '餐厅点餐 (Pedir comida)', prompt: '你好！我想点餐，你有什么推荐的中国菜吗？' },
+        { title: '旅行话题 (Falar de viagens)', prompt: '能给我讲讲你最喜欢的旅游目的地吗？' },
+      ];
+    }
+    if (lang === 'fr-FR') {
+      return [
+        { title: 'Présentation', prompt: 'Bonjour ! Je m’appelle et je souhaite pratiquer mon français.' },
+        { title: 'Au restaurant', prompt: 'Bonjour ! Qu’est-ce que vous me recommandez pour le déjeuner ?' },
+        { title: 'Voyages', prompt: 'Parlez-moi de votre destination de voyage préférée !' },
+      ];
+    }
+    if (lang === 'es-ES') {
+      return [
+        { title: 'Presentación', prompt: '¡Hola! Me gustaría presentarme y practicar mi español.' },
+        { title: 'En el restaurante', prompt: '¡Hola! ¿Qué plato típico me recomienda para hoy?' },
+        { title: 'Viajes', prompt: '¡Cuéntame sobre tu lugar favorito para viajar!' },
+      ];
+    }
+    if (lang === 'it-IT') {
+      return [
+        { title: 'Presentazione', prompt: 'Ciao! Vorrei presentarmi e fare un po’ di pratica in italiano.' },
+        { title: 'Al ristorante', prompt: 'Ciao! Che cosa mi consigli di mangiare oggi?' },
+        { title: 'Viaggi', prompt: 'Parlami del tuo posto preferito in Italia!' },
+      ];
+    }
+    return [
+      { title: t('conversation.topic1'), prompt: 'Hallo! Ich möchte mich gerne vorstellen und mein Deutsch üben.' },
+      { title: t('conversation.topic2'), prompt: 'Guten Tag! Ich möchte etwas zu essen bestellen, was empfehlen Sie?' },
+      { title: t('conversation.topic3'), prompt: 'Erzähl mir von deinen Lieblingsreisezielen und warum sie so besonders sind.' },
+    ];
+  })();
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden bg-gradient-to-b from-slate-900 via-slate-900 to-ink-950 text-white">

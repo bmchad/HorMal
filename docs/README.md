@@ -6,3 +6,4 @@ hear you will note dowm the corrections that already have been applied, for exam
 4.md APPLIED
 5.md APPLIED
 6.md APPLIED
+7.md APPLIED

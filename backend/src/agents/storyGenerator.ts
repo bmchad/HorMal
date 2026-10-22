@@ -97,6 +97,10 @@ export async function runStoryGeneratorAgent(
           `2. SYNTACTIC SIMPLICITY: Keep sentences clean, short, and direct with straightforward Subject-Verb-Object word order. Strictly avoid dense subordinate cascades, nested clauses, passive voice, and participial constructions. Every sentence must be crystal-clear on first listen.`,
           user.targetLanguage === 'de-DE'
             ? `3. GERMAN A2 CALIBRATION: For German at ${level}, ensure the text strictly feels like true A2 and NOT B1. Do not use passive voice (wird/wurde getan). Do not use relative pronouns (der/die/das/welche). Do not use Genitive case (use "von" + Dativ). Rely on direct Hauptsätze, basic connectors (und, aber, oder, weil), and everyday Perfekt/Präteritum (war, hatte).`
+            : user.targetLanguage === 'ja-JP'
+            ? `3. JAPANESE CALIBRATION: For Japanese at ${level}, use standard polite form (〜ます / 〜です), high-frequency everyday vocabulary (JLPT N5/N4 level), straightforward particles (は, が, を, に, で), and avoid complex honorifics (keigo) or rare kanji.`
+            : user.targetLanguage === 'zh-CN'
+            ? `3. MANDARIN CHINESE CALIBRATION: For Mandarin at ${level}, use standard Putonghua with HSK 1-2 vocabulary, clear SVO structures, high-frequency measure words (个), and avoid rare chengyu (four-character idioms) or literary grammar.`
             : '',
           `4. QUESTIONS & ANSWERS: Ensure questions are direct and model answers naturally reuse the repeated target keywords to reinforce retention.`,
         ]

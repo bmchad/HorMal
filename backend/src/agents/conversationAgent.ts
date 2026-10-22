@@ -114,6 +114,10 @@ export async function runConversationAgent(
           `- Avoid dense subordinate clauses, nested clauses, and passive voice.`,
           user.targetLanguage === 'de-DE'
             ? `- German A2 safeguard: Strictly speak at true A2 level. Do NOT use passive voice (wird/wurde) or relative clauses (der/die/das/welche). Use active voice and simple Perfekt/Präteritum (war, hatte).`
+            : user.targetLanguage === 'ja-JP'
+            ? `- Japanese calibration: Speak using polite form (です / ます). Keep sentences short and conversational. In suggestedVocab, include furigana/reading in parentheses (e.g., 食べる (たべる)).`
+            : user.targetLanguage === 'zh-CN'
+            ? `- Mandarin Chinese calibration: Speak natural conversational Putonghua. In suggestedVocab, include pinyin in parentheses (e.g., 朋友 (péngyou)).`
             : '',
         ]
           .filter(Boolean)

@@ -368,13 +368,29 @@ export const mockApi = {
           id: 1,
           conversationId: `mock-conv-${Date.now()}`,
           role: 'model',
-          textTarget: 'Hallo! Wie geht es dir heute? Worüber möchtest du sprechen?',
+          textTarget:
+            p.targetLanguage === 'ja-JP'
+              ? 'こんにちは！お会いできて嬉しいです。今日は何について話しましょうか？'
+              : p.targetLanguage === 'zh-CN'
+              ? '你好！很高兴见到你。今天你想聊些什么呢？'
+              : 'Hallo! Wie geht es dir heute? Worüber möchtest du sprechen?',
           textUi: 'Hello! How are you doing today? What would you like to talk about?',
           audioUrl: null,
-          suggestedVocab: [
-            { word: 'das Gespräch', gender: 'n', plural: 'die Gespräche', pos: 'noun', note: 'conversation' },
-            { word: 'sprechen', pos: 'verb', note: 'to speak' },
-          ],
+          suggestedVocab:
+            p.targetLanguage === 'ja-JP'
+              ? [
+                  { word: '話す', pos: 'verb', note: 'to speak' },
+                  { word: '今日', pos: 'noun', note: 'today' },
+                ]
+              : p.targetLanguage === 'zh-CN'
+              ? [
+                  { word: '聊天', pos: 'verb', note: 'to chat' },
+                  { word: '今天', pos: 'noun', note: 'today' },
+                ]
+              : [
+                  { word: 'das Gespräch', gender: 'n', plural: 'die Gespräche', pos: 'noun', note: 'conversation' },
+                  { word: 'sprechen', pos: 'verb', note: 'to speak' },
+                ],
           createdAt: new Date().toISOString(),
         },
       ],

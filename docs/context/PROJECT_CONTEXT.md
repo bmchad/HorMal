@@ -55,6 +55,16 @@ This directory and document serve as the persistent project context and decision
   - **1-Tap Vocab Extraction**: Every tutor turn extracts 1–3 contextual vocabulary items with gender/POS/note that can be directly saved to `VocabTab` with one click.
   - **Database Migration**: Created `conversations` (id, user_id, target_language, cefr_level, difficulty_mode, title, timestamps) and `conversation_messages` (id, conversation_id, role, text_target, text_ui, audio_url, suggested_vocab_json, created_at).
 
+### Decision 008: Reliable Voice Autoplay & Japanese / Mandarin Expansion
+- **Reliable Voice Autoplay**:
+  - Implemented pre-unlocking of the browser audio element on user gesture (`unlockAudio` playing a 1-sample silent WAV buffer).
+  - The unlocked element is recycled when the AI audio arrives, ensuring mobile Safari (iOS) and desktop Chrome autoplay policies never block tutor responses.
+- **Japanese & Mandarin Expansion**:
+  - Added `ja-JP` (Japanese / 日本語 🇯🇵) and `zh-CN` (Mandarin / 中文 🇨🇳) to supported target languages across the app.
+  - Configured Google Cloud Chirp 3 HD (`ja-JP-Chirp3-HD-Aoede` & `cmn-CN-Chirp3-HD-Aoede`) and Polly (`Kazuha` & `Zhiyu`).
+  - Added JLPT N5/N4 and HSK 1/2 didactic calibrations in `storyGenerator` and `conversationAgent`.
+  - Added language-specific voice note topics and Web Speech STT support in `ConversationTab`.
+
 ---
 
 ## 3. Deployment Runbook

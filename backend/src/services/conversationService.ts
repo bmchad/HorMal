@@ -90,6 +90,36 @@ const GREETINGS: Record<string, { target: string; ui: Record<string, string>; vo
     },
     vocab: [{ word: 'conversar', gender: '', plural: '', pos: 'verb', note: 'to converse / falar' }],
   },
+  'ja-JP': {
+    target: 'こんにちは！お会いできて嬉しいです。今日は何について話しましょうか？',
+    ui: {
+      en: 'Hello! Nice to meet you. What would you like to talk about today?',
+      'pt-BR': 'Olá! Que bom ter você aqui. Sobre o que você gostaria de conversar hoje?',
+      es: '¡Hola! Qué bien tenerte aquí. ¿De qué te gustaría hablar hoy?',
+      de: 'Hallo! Schön, dass du da bist. Worüber möchtest du heute sprechen?',
+      fr: 'Bonjour ! Ravi de vous voir. De quoi aimeriez-vous parler aujourd’hui ?',
+      it: 'Ciao! Bello averti qui. Di cosa vorresti parlare oggi?',
+    },
+    vocab: [
+      { word: '話す (はなす)', gender: '', plural: '', pos: 'verb', note: 'to speak / conversar' },
+      { word: '今日 (きょう)', gender: '', plural: '', pos: 'noun', note: 'today / hoje' },
+    ],
+  },
+  'zh-CN': {
+    target: '你好！很高兴见到你。今天你想聊些什么呢？',
+    ui: {
+      en: 'Hello! Nice to meet you. What would you like to talk about today?',
+      'pt-BR': 'Olá! Que bom ter você aqui. Sobre o que você gostaria de conversar hoje?',
+      es: '¡Hola! Qué bien tenerte aquí. ¿De qué te gustaría hablar hoy?',
+      de: 'Hallo! Schön, dass du da bist. Worüber möchtest du heute sprechen?',
+      fr: 'Bonjour ! Ravi de vous voir. De quoi aimeriez-vous parler aujourd’hui ?',
+      it: 'Ciao! Bello averti qui. Di cosa vorresti parlare oggi?',
+    },
+    vocab: [
+      { word: '聊天 (liáotiān)', gender: '', plural: '', pos: 'verb', note: 'to chat / conversar' },
+      { word: '今天 (jīntiān)', gender: '', plural: '', pos: 'noun', note: 'today / hoje' },
+    ],
+  },
 };
 
 export async function getOrCreateActiveConversation(user: UserRow): Promise<ClientConversation> {

@@ -1,7 +1,7 @@
 export const VOICE_ENGINES = ['google_cloud_tts', 'polly_generative', 'openai_tts', 'browser_natural'] as const;
 export type VoiceEngine = (typeof VOICE_ENGINES)[number];
 
-export const TARGET_LANGUAGES = ['de-DE', 'fr-FR', 'es-ES', 'it-IT', 'en-US', 'pt-BR'] as const;
+export const TARGET_LANGUAGES = ['de-DE', 'fr-FR', 'es-ES', 'it-IT', 'en-US', 'pt-BR', 'ja-JP', 'zh-CN'] as const;
 export type TargetLanguage = (typeof TARGET_LANGUAGES)[number];
 
 export const UI_LANGUAGES = [
@@ -43,12 +43,16 @@ const LANGUAGE_NAMES: Record<string, string> = {
   'it-IT': 'Italian',
   'en-US': 'English',
   'pt-BR': 'Brazilian Portuguese',
+  'ja-JP': 'Japanese',
+  'zh-CN': 'Mandarin Chinese (Simplified)',
   en: 'English',
   es: 'Spanish',
   de: 'German',
   fr: 'French',
   it: 'Italian',
   pt: 'Brazilian Portuguese',
+  ja: 'Japanese',
+  zh: 'Mandarin Chinese',
 };
 
 export function languageName(code: string): string {

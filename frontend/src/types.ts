@@ -1,5 +1,5 @@
 export type VoiceEngine = 'google_cloud_tts' | 'polly_generative' | 'openai_tts' | 'browser_natural';
-export type TargetLanguage = 'de-DE' | 'fr-FR' | 'es-ES' | 'it-IT' | 'en-US' | 'pt-BR';
+export type TargetLanguage = 'de-DE' | 'fr-FR' | 'es-ES' | 'it-IT' | 'en-US' | 'pt-BR' | 'ja-JP' | 'zh-CN';
 export type UiLanguage =
   | 'de-DE'
   | 'fr-FR'

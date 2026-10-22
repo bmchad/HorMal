@@ -22,6 +22,8 @@ const POLLY_VOICES: Record<string, string[]> = {
   'it-IT': ['Beatrice', 'Bianca'],
   'en-US': ['Ruth', 'Danielle'],
   'pt-BR': ['Camila', 'Vitoria'],
+  'ja-JP': ['Kazuha', 'Tomoko', 'Mizuki'],
+  'zh-CN': ['Zhiyu'],
 };
 const ES_US_VOICE = 'Lupe';
 
@@ -34,6 +36,8 @@ const GOOGLE_TTS_VOICES: Record<string, string[]> = {
   'it-IT': ['it-IT-Chirp3-HD-Aoede', 'it-IT-Neural2-A'],
   'en-US': ['en-US-Chirp3-HD-Aoede', 'en-US-Neural2-F'],
   'pt-BR': ['pt-BR-Chirp3-HD-Aoede', 'pt-BR-Neural2-A'],
+  'ja-JP': ['ja-JP-Chirp3-HD-Aoede', 'ja-JP-Neural2-B'],
+  'zh-CN': ['cmn-CN-Chirp3-HD-Aoede', 'cmn-CN-Neural2-A'],
 };
 
 export function defaultVoiceId(engine: VoiceEngine, language: string): string {
@@ -79,7 +83,7 @@ async function synthesizeGoogleCloud(text: string, language: string, voiceId: st
         body: JSON.stringify({
           input: { text },
           voice: {
-            languageCode: language,
+            languageCode: language === 'zh-CN' ? 'cmn-CN' : language,
             name: voice,
           },
           audioConfig: {
