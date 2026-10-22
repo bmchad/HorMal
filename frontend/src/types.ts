@@ -82,10 +82,10 @@ export interface StorySummary {
 
 export interface VocabWord {
   word: string;
-  gender: string;
-  plural: string;
-  pos: string;
-  note: string;
+  gender?: string;
+  plural?: string;
+  pos?: string;
+  note?: string;
 }
 
 export interface Evaluation {
@@ -123,4 +123,26 @@ export interface SynthesizeResponse {
   voiceId: string;
   url: string | null;
   cached: boolean;
+}
+
+export interface ConversationMessage {
+  id: number;
+  conversationId: string;
+  role: 'user' | 'model';
+  textTarget: string;
+  textUi: string | null;
+  audioUrl: string | null;
+  suggestedVocab: VocabWord[];
+  createdAt: string;
+}
+
+export interface Conversation {
+  id: string;
+  targetLanguage: TargetLanguage | string;
+  cefrLevel: CefrLevel | string;
+  difficultyMode: DifficultyMode | string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  messages: ConversationMessage[];
 }

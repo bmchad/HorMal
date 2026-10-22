@@ -8,6 +8,8 @@ import { listStories, loadProgress, loadStoryRows, toClientStory } from '../serv
 import { synthesize, synthesizeInput } from '../services/ttsService';
 import { getOrCreateUser, preferencesSchema, toClientUser, updatePreferences } from '../services/userService';
 import { deleteVocab, listVocab, saveVocab, vocabInput } from '../services/vocabService';
+import { runConversationAgent, sendMessageInput } from '../agents/conversationAgent';
+import { getOrCreateActiveConversation, createNewConversation } from '../services/conversationService';
 
 type Event = APIGatewayProxyEventV2WithJWTAuthorizer;
 type Ctx = { event: Event; params: string[] };
@@ -72,6 +74,21 @@ const routes: { method: string; pattern: RegExp; handler: Handler }[] = [
       await deleteVocab(user.id, Number(params[0]));
       return { ok: true };
     },
+  },
+  {
+    method: 'GET',
+    pattern: /^\/api\/conversation$/,
+    handler: async (_c, user) => getOrCreateActiveConversation(user),
+  },
+  {
+    method: 'POST',
+    pattern: /^\/api\/conversation\/message$/,
+    handler: async ({ event }, user) => runConversationAgent(user, sendMessageInput.parse(body(event))),
+  },
+  {
+    method: 'POST',
+    pattern: /^\/api\/conversation\/reset$/,
+    handler: async ({ event }, user) => createNewConversation(user, body<{ title?: string }>(event)?.title),
   },
 ];
 

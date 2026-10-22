@@ -47,6 +47,14 @@ This directory and document serve as the persistent project context and decision
   - **Hard Mode (⚡ Desafiador)**: Richer vocabulary, varied sentence structures, higher CEFR boundary.
 - **Database Schema**: Added `difficulty_mode VARCHAR(16) NOT NULL DEFAULT 'normal'` to `users` and `stories` tables.
 
+### Decision 007: Conversational Voice Tab (/conversation)
+- **Decision**: Added an interactive voice chat bot tab strictly placed between **Hören (`practice`)** and **Vocab (`vocab`)**:
+  - **Audio-First Experience**: Tutor answers exclusively via voice note audio bubbles (synthesized with Google Cloud Chirp 3 HD default), auto-playing on arrival. Transcripts are blurred by default with an optional "Reveal text" toggle.
+  - **Input Modality**: Users can type text or speak via integrated browser Speech-to-Text (Web Speech API) configured to the target language.
+  - **Persistent Multi-Turn Context**: Supported via Gemini structured chat sessions preserving the entire conversation turn history (last 30 turns) fetched from PostgreSQL database tables (`conversations` and `conversation_messages`).
+  - **1-Tap Vocab Extraction**: Every tutor turn extracts 1–3 contextual vocabulary items with gender/POS/note that can be directly saved to `VocabTab` with one click.
+  - **Database Migration**: Created `conversations` (id, user_id, target_language, cefr_level, difficulty_mode, title, timestamps) and `conversation_messages` (id, conversation_id, role, text_target, text_ui, audio_url, suggested_vocab_json, created_at).
+
 ---
 
 ## 3. Deployment Runbook

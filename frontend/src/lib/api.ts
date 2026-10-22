@@ -2,6 +2,8 @@ import { getIdToken, IS_MOCK } from './auth';
 import * as mock from './mockApi';
 import type {
   ChatMessage,
+  Conversation,
+  ConversationMessage,
   EvalResult,
   Profile,
   SavedWord,
@@ -74,6 +76,15 @@ const real = {
   saveVocab: (w: VocabWord & { targetLanguage: string }) =>
     request<{ word: SavedWord }>('POST', '/api/vocab', w).then((r) => r.word),
   deleteVocab: (id: number) => request<{ ok: boolean }>('DELETE', `/api/vocab/${id}`),
+  getConversation: () => request<Conversation>('GET', '/api/conversation'),
+  sendConversationMessage: (input: { conversationId?: string; message: string; audioToText?: boolean }) =>
+    request<{ userMessage: ConversationMessage; modelMessage: ConversationMessage; conversationTitle?: string }>(
+      'POST',
+      '/api/conversation/message',
+      input,
+    ),
+  resetConversation: (title?: string) =>
+    request<Conversation>('POST', '/api/conversation/reset', { title }),
 };
 
 export const api: typeof real = IS_MOCK ? (mock.mockApi as typeof real) : real;

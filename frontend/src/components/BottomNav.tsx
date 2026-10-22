@@ -1,9 +1,10 @@
 import { useApp } from '../context/AppContext';
 
-export type TabId = 'practice' | 'vocab' | 'profile';
+export type TabId = 'practice' | 'conversation' | 'vocab' | 'profile';
 
 const TABS: { id: TabId; emoji: string; key: string }[] = [
   { id: 'practice', emoji: '🎧', key: 'nav.practice' },
+  { id: 'conversation', emoji: '🎙️', key: 'nav.conversation' },
   { id: 'vocab', emoji: '📚', key: 'nav.vocab' },
   { id: 'profile', emoji: '👤', key: 'nav.profile' },
 ];
@@ -15,7 +16,7 @@ export function BottomNav({ tab, onChange }: { tab: TabId; onChange: (t: TabId) 
       aria-label="Primary"
       className="relative z-20 shrink-0 border-t border-slate-200/80 bg-white pb-[env(safe-area-inset-bottom)]"
     >
-      <ul className="grid h-16 grid-cols-3">
+      <ul className="grid h-16 grid-cols-4">
         {TABS.map((x) => {
           const active = tab === x.id;
           return (

@@ -1,6 +1,8 @@
 /** In-browser fake backend used by `npm run dev:mock` so the full UX can be explored without AWS. */
 import type {
   ChatMessage,
+  Conversation,
+  ConversationMessage,
   EvalResult,
   Evaluation,
   Profile,
@@ -347,5 +349,105 @@ export const mockApi = {
   async deleteVocab(id: number) {
     save('vocab', load<SavedWord[]>('vocab', []).filter((w) => w.id !== id));
     return { ok: true };
+  },
+  async getConversation(): Promise<Conversation> {
+    const p = load('profile', defaultProfile);
+    const convKey = `conv:${p.targetLanguage}`;
+    const existing = load<Conversation | null>(convKey, null);
+    if (existing) return existing;
+    const initial: Conversation = {
+      id: `mock-conv-${Date.now()}`,
+      targetLanguage: p.targetLanguage,
+      cefrLevel: p.cefrLevel,
+      difficultyMode: p.difficultyMode || 'normal',
+      title: 'Tägliches Gespräch',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      messages: [
+        {
+          id: 1,
+          conversationId: `mock-conv-${Date.now()}`,
+          role: 'model',
+          textTarget: 'Hallo! Wie geht es dir heute? Worüber möchtest du sprechen?',
+          textUi: 'Hello! How are you doing today? What would you like to talk about?',
+          audioUrl: null,
+          suggestedVocab: [
+            { word: 'das Gespräch', gender: 'n', plural: 'die Gespräche', pos: 'noun', note: 'conversation' },
+            { word: 'sprechen', pos: 'verb', note: 'to speak' },
+          ],
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    };
+    save(convKey, initial);
+    return initial;
+  },
+  async sendConversationMessage(input: { conversationId?: string; message: string; audioToText?: boolean }) {
+    await delay(700);
+    const p = load('profile', defaultProfile);
+    const convKey = `conv:${p.targetLanguage}`;
+    let conv = load<Conversation | null>(convKey, null);
+    if (!conv) {
+      conv = await this.getConversation();
+    }
+    const userMsg: ConversationMessage = {
+      id: Date.now(),
+      conversationId: conv.id,
+      role: 'user',
+      textTarget: input.message,
+      textUi: null,
+      audioUrl: null,
+      suggestedVocab: [],
+      createdAt: new Date().toISOString(),
+    };
+    conv.messages.push(userMsg);
+
+    const modelMsg: ConversationMessage = {
+      id: Date.now() + 1,
+      conversationId: conv.id,
+      role: 'model',
+      textTarget: `Das ist sehr interessant! Erzähl mir mehr darüber: "${input.message}".`,
+      textUi: `That is very interesting! Tell me more about that: "${input.message}".`,
+      audioUrl: null,
+      suggestedVocab: [
+        { word: 'interessant', pos: 'adjective', note: 'interesting' },
+        { word: 'erzählen', pos: 'verb', note: 'to tell / recount' },
+      ],
+      createdAt: new Date().toISOString(),
+    };
+    conv.messages.push(modelMsg);
+    conv.updatedAt = new Date().toISOString();
+    save(convKey, conv);
+    return { userMessage: userMsg, modelMessage: modelMsg, conversationTitle: conv.title };
+  },
+  async resetConversation(title?: string): Promise<Conversation> {
+    const p = load('profile', defaultProfile);
+    const convKey = `conv:${p.targetLanguage}`;
+    const newConv: Conversation = {
+      id: `mock-conv-${Date.now()}`,
+      targetLanguage: p.targetLanguage,
+      cefrLevel: p.cefrLevel,
+      difficultyMode: p.difficultyMode || 'normal',
+      title: title || 'Neues Gespräch',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      messages: [
+        {
+          id: 1,
+          conversationId: `mock-conv-${Date.now()}`,
+          role: 'model',
+          textTarget: 'Hallo! Ein neues Thema beginnt. Worüber möchtest du heute sprechen?',
+          textUi: 'Hello! A new topic begins. What would you like to talk about today?',
+          audioUrl: null,
+          suggestedVocab: [
+            { word: 'das Thema', gender: 'n', plural: 'die Themen', pos: 'noun', note: 'topic' },
+            { word: 'beginnen', pos: 'verb', note: 'to begin' },
+          ],
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    };
+    save(convKey, newConv);
+    return newConv;
   },
 };

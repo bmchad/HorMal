@@ -122,4 +122,38 @@ export const userVocabulary = pgTable(
   (t) => [unique('user_vocab_uq').on(t.userId, t.targetLanguage, t.word)],
 );
 
+export const conversations = pgTable(
+  'conversations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    targetLanguage: varchar('target_language', { length: 16 }).notNull(),
+    cefrLevel: varchar('cefr_level', { length: 4 }).notNull(),
+    difficultyMode: varchar('difficulty_mode', { length: 16 }).notNull().default('normal'),
+    title: varchar('title', { length: 255 }).notNull().default('Conversation'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('conversations_user_lang_idx').on(t.userId, t.targetLanguage, t.updatedAt)],
+);
+
+export const conversationMessages = pgTable(
+  'conversation_messages',
+  {
+    id: serial('id').primaryKey(),
+    conversationId: uuid('conversation_id')
+      .notNull()
+      .references(() => conversations.id, { onDelete: 'cascade' }),
+    role: varchar('role', { length: 16 }).notNull(),
+    textTarget: text('text_target').notNull(),
+    textUi: text('text_ui'),
+    audioUrl: text('audio_url'),
+    suggestedVocabJson: jsonb('suggested_vocab_json'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('conversation_messages_conv_idx').on(t.conversationId, t.createdAt)],
+);
+
 export type User = typeof users.$inferSelect;

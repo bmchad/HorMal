@@ -4,6 +4,7 @@ type Dict = Record<string, string>;
 
 const en: Dict = {
   'nav.practice': 'Practice',
+  'nav.conversation': 'Talk',
   'nav.vocab': 'Vocab',
   'nav.profile': 'Profile',
   'header.new': 'New',
@@ -107,6 +108,25 @@ const en: Dict = {
   'history.pending': 'Not completed yet',
   'history.current': 'Current',
   'history.search': 'Search stories…',
+  'conversation.title': 'Audio Conversation',
+  'conversation.subtitle': 'Speak or write in target language. Your tutor responds with voice notes.',
+  'conversation.badge': 'Pure Audio Mode',
+  'conversation.badgeDesc': 'Tutor replies in voice only. Challenge your ears before revealing text.',
+  'conversation.newTopic': 'New Topic',
+  'conversation.reveal': 'Show text & translation',
+  'conversation.hide': 'Hide text',
+  'conversation.micStart': 'Speak',
+  'conversation.micStop': 'Listening… (tap to stop)',
+  'conversation.placeholder': 'Type in target language or use the mic…',
+  'conversation.send': 'Send',
+  'conversation.thinking': 'Tutor is speaking…',
+  'conversation.saveVocab': 'Save word',
+  'conversation.saved': 'Saved!',
+  'conversation.sttUnsupported': 'Voice input is not supported in this browser. Please type your message.',
+  'conversation.quickTopicPrompt': 'Start a conversation about:',
+  'conversation.topic1': 'Introduce yourself and your goals',
+  'conversation.topic2': 'Order food at a local restaurant',
+  'conversation.topic3': 'Discuss your favorite travel destination',
   ...themeDict({
     fun_facts: 'Curiosities & Fun Facts',
     science_nature: 'Science & Nature',
@@ -124,6 +144,7 @@ const en: Dict = {
 const ptBR: Dict = {
   ...en,
   'nav.practice': 'Praticar',
+  'nav.conversation': 'Conversar',
   'nav.vocab': 'Vocab',
   'nav.profile': 'Perfil',
   'header.new': 'Nova',
@@ -226,6 +247,25 @@ const ptBR: Dict = {
   'history.pending': 'Ainda não concluída',
   'history.current': 'Atual',
   'history.search': 'Buscar histórias…',
+  'conversation.title': 'Conversação em Áudio',
+  'conversation.subtitle': 'Fale ou digite no idioma. A tutora responde com mensagens de voz.',
+  'conversation.badge': 'Modo 100% Áudio',
+  'conversation.badgeDesc': 'A IA responde exclusivamente por áudio. Ouça antes de revelar o texto.',
+  'conversation.newTopic': 'Novo Tema',
+  'conversation.reveal': 'Mostrar texto e tradução',
+  'conversation.hide': 'Ocultar texto',
+  'conversation.micStart': 'Falar',
+  'conversation.micStop': 'Ouvindo… (toque p/ parar)',
+  'conversation.placeholder': 'Digite no idioma ou use o microfone…',
+  'conversation.send': 'Enviar',
+  'conversation.thinking': 'A tutora está falando…',
+  'conversation.saveVocab': 'Salvar palavra',
+  'conversation.saved': 'Salvo!',
+  'conversation.sttUnsupported': 'Reconhecimento de fala não suportado neste navegador. Digite sua mensagem.',
+  'conversation.quickTopicPrompt': 'Inicie uma conversa sobre:',
+  'conversation.topic1': 'Apresente-se e fale seus objetivos',
+  'conversation.topic2': 'Pedir comida em um restaurante local',
+  'conversation.topic3': 'Falar sobre sua viagem favorita',
   ...themeDict({
     fun_facts: 'Curiosidades',
     science_nature: 'Ciência e Natureza',
@@ -243,6 +283,7 @@ const ptBR: Dict = {
 const es: Dict = {
   ...en,
   'nav.practice': 'Practicar',
+  'nav.conversation': 'Conversar',
   'nav.vocab': 'Vocab',
   'nav.profile': 'Perfil',
   'header.new': 'Nueva',
@@ -361,6 +402,7 @@ const es: Dict = {
 
 const deDE: Dict = {
   'nav.practice': 'Üben',
+  'nav.conversation': 'Sprechen',
   'nav.vocab': 'Wortschatz',
   'nav.profile': 'Profil',
   'header.new': 'Neu',
@@ -480,6 +522,7 @@ const deDE: Dict = {
 
 const frFR: Dict = {
   'nav.practice': 'Pratique',
+  'nav.conversation': 'Parler',
   'nav.vocab': 'Vocabulaire',
   'nav.profile': 'Profil',
   'header.new': 'Nouveau',
@@ -599,6 +642,7 @@ const frFR: Dict = {
 
 const itIT: Dict = {
   'nav.practice': 'Pratica',
+  'nav.conversation': 'Conversare',
   'nav.vocab': 'Vocabolario',
   'nav.profile': 'Profilo',
   'header.new': 'Nuovo',

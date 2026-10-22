@@ -13,6 +13,7 @@ import { AudioProvider } from './context/AudioContext';
 import { StoryProvider } from './context/StoryContext';
 import { hasSession } from './lib/auth';
 import { LoginScreen } from './LoginScreen';
+import { ConversationTab } from './tabs/ConversationTab';
 import { PracticeTab } from './tabs/PracticeTab';
 import { ProfileTab } from './tabs/ProfileTab';
 import { VocabTab } from './tabs/VocabTab';
@@ -39,6 +40,7 @@ function Main() {
         <Header />
         <main className="relative flex min-h-0 flex-1 flex-col">
           {tab === 'practice' && <PracticeTab />}
+          {tab === 'conversation' && <ConversationTab />}
           {tab === 'vocab' && <VocabTab />}
           {tab === 'profile' && <ProfileTab />}
         </main>
